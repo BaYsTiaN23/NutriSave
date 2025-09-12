@@ -1,7 +1,4 @@
 # NutriSave
-
-Aquí tienes un **README.md** bien estructurado y listo para tu repositorio de **NutriSave** 🚀
-
 ---
 
 # 🥗 NutriSave – Asistente Virtual de Menús Inteligentes y Asequibles
@@ -142,5 +139,3 @@ El objetivo es facilitar la vida de los usuarios, apoyar a nutriólogos y **redu
   > “NutriSave no sustituye la atención médica. Consulta siempre con un profesional de la salud antes de iniciar un plan alimenticio.”
 
 ---
-
-¿Quieres que te lo prepare directamente en formato **`README.md` con tablas, badges y secciones colapsables** para que quede más pro y listo para GitHub? 🚀
