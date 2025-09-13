@@ -2,15 +2,6 @@
 
 namespace App\Http\Controllers;
 
-<<<<<<< Updated upstream
-use Inertia\Inertia;
-
-class BusinessController extends Controller
-{
-    public function index()
-    {
-        return Inertia::render('business');
-=======
 use App\Models\Business;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -158,6 +149,5 @@ class BusinessController extends Controller
             ->paginate(15);
 
         return response()->json($promotions);
->>>>>>> Stashed changes
     }
 }
