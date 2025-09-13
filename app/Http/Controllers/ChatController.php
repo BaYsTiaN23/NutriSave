@@ -6,6 +6,7 @@ use App\Models\Chat;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use OpenAI\Laravel\Facades\OpenAI;
 use Illuminate\Http\StreamedEvent;
@@ -135,13 +136,8 @@ class ChatController extends Controller
                 }
             }
 
-            // Prepare messages for OpenAI
-            $openAIMessages = collect($messages)
-                ->map(fn ($message) => [
-                    'role' => $message['type'] === 'prompt' ? 'user' : 'assistant',
-                    'content' => $message['content'],
-                ])
-                ->toArray();
+            // Prepare messages for OpenAI with user profile context
+            $openAIMessages = $this->prepareMessagesWithUserContext($messages, $chat);
 
             // Stream response from OpenAI
             $fullResponse = '';
@@ -190,12 +186,12 @@ class ChatController extends Controller
                 ]);
 
                 // Generate title if this is a new chat with "Untitled" title
-                \Log::info('Checking if should generate title', ['chat_title' => $chat->title]);
+                Log::info('Checking if should generate title', ['chat_title' => $chat->title]);
                 if ($chat->title === 'Untitled') {
-                    \Log::info('Generating title in background for chat', ['chat_id' => $chat->id]);
+                    Log::info('Generating title in background for chat', ['chat_id' => $chat->id]);
                     $this->generateTitleInBackground($chat);
                 } else {
-                    \Log::info('Not generating title', ['current_title' => $chat->title]);
+                    Log::info('Not generating title', ['current_title' => $chat->title]);
                 }
             }
         }, 200, [
@@ -222,7 +218,7 @@ class ChatController extends Controller
     {
         $this->authorize('view', $chat);
 
-        \Log::info('Title stream requested for chat', ['chat_id' => $chat->id, 'title' => $chat->title]);
+        Log::info('Title stream requested for chat', ['chat_id' => $chat->id, 'title' => $chat->title]);
 
         return response()->eventStream(function () use ($chat) {
             // If title is already set and not "Untitled", send it immediately
@@ -258,6 +254,104 @@ class ChatController extends Controller
                 usleep(500000); // 0.5 seconds
             }
         }, endStreamWith: new StreamedEvent(event: 'title-update', data: '</stream>'));
+    }
+
+    /**
+     * Prepare messages with user profile context for AI
+     */
+    private function prepareMessagesWithUserContext(array $messages, ?Chat $chat): array
+    {
+        $openAIMessages = collect($messages)
+            ->map(fn ($message) => [
+                'role' => $message['type'] === 'prompt' ? 'user' : 'assistant',
+                'content' => $message['content'],
+            ])
+            ->toArray();
+
+        // Add user profile context as system message if user is authenticated and has a profile
+        if ($chat && Auth::check()) {
+            $user = Auth::user();
+            $userProfile = $user->userProfile;
+
+            if ($userProfile) {
+                $profileContext = $this->buildUserProfileContext($userProfile);
+                
+                // Insert system message at the beginning
+                array_unshift($openAIMessages, [
+                    'role' => 'system',
+                    'content' => $profileContext
+                ]);
+            }
+        }
+
+        return $openAIMessages;
+    }
+
+    /**
+     * Build user profile context string for AI
+     */
+    private function buildUserProfileContext($userProfile): string
+    {
+        $context = "You are NutriSave, a nutrition and wellness AI assistant. Here is the user's profile information to provide personalized recommendations:\n\n";
+        
+        // Basic information
+        if ($userProfile->age) {
+            $context .= "Age: {$userProfile->age} years old\n";
+        }
+        
+        if ($userProfile->weight) {
+            $context .= "Weight: {$userProfile->weight} kg\n";
+        }
+        
+        if ($userProfile->height) {
+            $context .= "Height: {$userProfile->height} cm\n";
+        }
+        
+        if ($userProfile->weekly_budget) {
+            $context .= "Weekly Budget: $" . $userProfile->weekly_budget . "\n";
+        }
+        
+        // Health goal
+        if ($userProfile->goal) {
+            $goalMap = [
+                'weight_loss' => 'Weight Loss',
+                'muscle_gain' => 'Muscle Gain',
+                'diabetes_control' => 'Diabetes Management',
+                'hypertension_control' => 'Blood Pressure Management',
+                'balanced' => 'Balanced Nutrition',
+                'custom' => 'Custom Goal'
+            ];
+            $goalName = $goalMap[$userProfile->goal] ?? $userProfile->goal;
+            $context .= "Health Goal: {$goalName}\n";
+        }
+        
+        // Medical conditions
+        if ($userProfile->medical_condition && !empty($userProfile->medical_condition)) {
+            $conditions = is_array($userProfile->medical_condition) 
+                ? implode(', ', $userProfile->medical_condition)
+                : $userProfile->medical_condition;
+            $context .= "Medical Conditions: {$conditions}\n";
+        }
+        
+        // Dietary preferences
+        if ($userProfile->dietary_preferences && !empty($userProfile->dietary_preferences)) {
+            $preferences = is_array($userProfile->dietary_preferences) 
+                ? implode(', ', $userProfile->dietary_preferences)
+                : $userProfile->dietary_preferences;
+            $context .= "Dietary Preferences: {$preferences}\n";
+        }
+        
+        // Allergens
+        if ($userProfile->allergens && !empty($userProfile->allergens)) {
+            $allergens = is_array($userProfile->allergens) 
+                ? implode(', ', $userProfile->allergens)
+                : $userProfile->allergens;
+            $context .= "Allergens to Avoid: {$allergens}\n";
+        }
+        
+        $context .= "\nPlease provide personalized nutrition advice, meal suggestions, and health recommendations based on this profile. Always consider their medical conditions, dietary restrictions, allergens, and health goals when making suggestions. Be supportive and informative while encouraging healthy lifestyle choices.";
+        
+        return $context;
     }
 
     private function generateTitleInBackground(Chat $chat)
@@ -301,13 +395,13 @@ class ChatController extends Controller
             // Update the chat title
             $chat->update(['title' => $generatedTitle]);
 
-            \Log::info('Generated title for chat', ['chat_id' => $chat->id, 'title' => $generatedTitle]);
+            Log::info('Generated title for chat', ['chat_id' => $chat->id, 'title' => $generatedTitle]);
 
         } catch (\Exception $e) {
             // Fallback title on error
             $fallbackTitle = substr($firstMessage->content, 0, 47) . '...';
             $chat->update(['title' => $fallbackTitle]);
-            \Log::error('Error generating title, using fallback', ['error' => $e->getMessage()]);
+            Log::error('Error generating title, using fallback', ['error' => $e->getMessage()]);
         }
     }
 }
