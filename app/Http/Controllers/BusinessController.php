@@ -140,11 +140,45 @@ class BusinessController extends Controller
     /**
      * Get business products.
      */
-    public function products(Business $business): JsonResponse
+    public function products(Request $request, Business $business): JsonResponse
     {
-        $products = $business->products()
-            ->with('promotions')
-            ->paginate(15);
+        $query = $business->products()->with('promotions');
+
+        // Handle sorting
+        $sortField = $request->get('sort', 'created_at');
+        $sortOrder = $request->get('order', 'desc');
+        
+        // Validate sort field to prevent SQL injection
+        $allowedSortFields = ['id', 'name', 'brand', 'category', 'price', 'stock', 'created_at', 'updated_at'];
+        if (in_array($sortField, $allowedSortFields)) {
+            $query->orderBy($sortField, $sortOrder);
+        } else {
+            $query->orderBy('created_at', 'desc'); // Default fallback
+        }
+
+        // Handle filtering
+        if ($request->has('category')) {
+            $query->where('category', $request->category);
+        }
+
+        if ($request->has('brand')) {
+            $query->where('brand', 'like', '%' . $request->brand . '%');
+        }
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('sku', 'like', "%{$search}%");
+            });
+        }
+
+        // Handle pagination
+        $perPage = $request->get('per_page', 15);
+        $perPage = min($perPage, 100); // Limit max results per page
+        
+        $products = $query->paginate($perPage);
 
         return response()->json($products);
     }

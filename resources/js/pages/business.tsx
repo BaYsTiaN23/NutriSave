@@ -3,7 +3,6 @@
 import type React from "react"
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { router } from "@inertiajs/react"
 import axios from "axios"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -170,78 +169,86 @@ export default function BusinessPage() {
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     // API functions
-    const fetchBusinessData = useCallback(async (page = 1) => {
+    const fetchBusinessData = useCallback(async (page = 1, fetchOnlyProducts = false) => {
         try {
-            setLoading(true)
+            if (!fetchOnlyProducts) {
+                setLoading(true)
+            }
             
             // Fetch business analytics summary (using the existing business ID)
             const businessId = 3 // Updated to use the actual business ID that exists
-            const [statsResponse, productsResponse, promotionsResponse] = await Promise.all([
-                axios.get(`/api/b2b/businesses/${businessId}/analytics`),
-                axios.get(`/api/b2b/businesses/${businessId}/products?page=${page}&per_page=${productsPerPage}`),
-                axios.get(`/api/b2b/businesses/${businessId}/promotions`)
-            ])
-
-            // Update states with API data, ensuring arrays
-            setBusinessStats(statsResponse.data || {
-                totalViews: 0,
-                totalClicks: 0,
-                conversions: 0,
-                revenue: 0,
-                ctr: 0,
-                conversionRate: 0,
-            })
             
-            // Handle paginated or nested data structure
-            const productsData = productsResponse.data?.data || productsResponse.data
-            const promotionsData = promotionsResponse.data?.data || promotionsResponse.data
-            
-            setImportedProducts(Array.isArray(productsData) ? productsData : [])
-            setTotalProducts(productsResponse.data?.total || productsData?.length || 0)
-            setCurrentPage(page)
-            setPromotedProducts(Array.isArray(promotionsData) ? promotionsData : [])
+            if (fetchOnlyProducts) {
+                // Only fetch products for pagination
+                const productsResponse = await axios.get(`/api/b2b/businesses/${businessId}/products?page=${page}&per_page=${productsPerPage}&sort=created_at&order=desc`)
+                
+                // Handle paginated or nested data structure
+                const productsData = productsResponse.data?.data || productsResponse.data
+                
+                setImportedProducts(Array.isArray(productsData) ? productsData : [])
+                setTotalProducts(productsResponse.data?.total || productsData?.length || 0)
+                setCurrentPage(page)
+            } else {
+                // Fetch all data including analytics and promotions
+                const [statsResponse, productsResponse, promotionsResponse] = await Promise.all([
+                    axios.get(`/api/b2b/businesses/${businessId}/analytics`),
+                    axios.get(`/api/b2b/businesses/${businessId}/products?page=${page}&per_page=${productsPerPage}&sort=created_at&order=desc`),
+                    axios.get(`/api/b2b/businesses/${businessId}/promotions`)
+                ])
 
-            // Mock customer insights for now (can be added to API later)
-            setCustomerInsights([
-                {
-                    demographic: "Familias con niños",
-                    percentage: 35,
-                    avgSpend: 450,
-                    topProducts: ["Cereales", "Lácteos", "Frutas"],
-                },
-                {
-                    demographic: "Adultos jóvenes",
-                    percentage: 28,
-                    avgSpend: 280,
-                    topProducts: ["Proteínas", "Snacks", "Bebidas"],
-                },
-                {
-                    demographic: "Adultos mayores",
-                    percentage: 22,
-                    avgSpend: 320,
-                    topProducts: ["Medicinas", "Conservas", "Té"],
-                },
-                {
-                    demographic: "Estudiantes",
-                    percentage: 15,
-                    avgSpend: 180,
-                    topProducts: ["Pasta", "Arroz", "Enlatados"],
-                },
-            ])
+                // Update states with API data, ensuring arrays
+                setBusinessStats(statsResponse.data || {
+                    totalViews: 0,
+                    totalClicks: 0,
+                    conversions: 0,
+                    revenue: 0,
+                    ctr: 0,
+                    conversionRate: 0,
+                })
+                
+                // Handle paginated or nested data structure
+                const productsData = productsResponse.data?.data || productsResponse.data
+                const promotionsData = promotionsResponse.data?.data || promotionsResponse.data
+                
+                setImportedProducts(Array.isArray(productsData) ? productsData : [])
+                setTotalProducts(productsResponse.data?.total || productsData?.length || 0)
+                setCurrentPage(page)
+                setPromotedProducts(Array.isArray(promotionsData) ? promotionsData : [])
+
+                // Mock customer insights for now (can be added to API later)
+                setCustomerInsights([
+                    {
+                        demographic: "Familias con niños",
+                        percentage: 35,
+                        avgSpend: 450,
+                        topProducts: ["Cereales", "Lácteos", "Frutas"],
+                    },
+                    {
+                        demographic: "Adultos jóvenes",
+                        percentage: 28,
+                        avgSpend: 280,
+                        topProducts: ["Proteínas", "Snacks", "Bebidas"],
+                    },
+                    {
+                        demographic: "Adultos mayores",
+                        percentage: 22,
+                        avgSpend: 320,
+                        topProducts: ["Medicinas", "Conservas", "Té"],
+                    },
+                    {
+                        demographic: "Estudiantes",
+                        percentage: 15,
+                        avgSpend: 180,
+                        topProducts: ["Pasta", "Arroz", "Enlatados"],
+                    },
+                ])
+            }
         } catch (err) {
             console.log('API not available, using mock data for development')
             console.error('Error fetching business data:', err)
             
             // Load mock data when API fails (don't show error to user in this case)
             setError(null) // Clear any previous errors since we're providing fallback data
-            setBusinessStats({
-                totalViews: 12847,
-                totalClicks: 2156,
-                conversions: 324,
-                revenue: 15680,
-                ctr: 16.8,
-                conversionRate: 15.0,
-            })
             
             // Set mock products data with pagination simulation
             const mockProducts = [
@@ -311,41 +318,82 @@ export default function BusinessPage() {
             setTotalProducts(mockProducts.length)
             setCurrentPage(page)
             
-            // Set mock promotions data
-            setPromotedProducts([
-                {
-                    id: 1,
-                    name: "Aceite de Oliva Extra Virgen",
-                    brand: "Capullo",
-                    category: "Aceites",
-                    views: 1247,
-                    clicks: 189,
-                    conversions: 45,
-                    revenue: 2340,
-                    status: "active",
-                },
-                {
-                    id: 2,
-                    name: "Arroz Integral Premium",
-                    brand: "Verde Valle",
-                    category: "Granos",
-                    views: 892,
-                    clicks: 134,
-                    conversions: 28,
-                    revenue: 1456,
-                    status: "active",
-                },
-            ])
+            if (!fetchOnlyProducts) {
+                setBusinessStats({
+                    totalViews: 12847,
+                    totalClicks: 2156,
+                    conversions: 324,
+                    revenue: 15680,
+                    ctr: 16.8,
+                    conversionRate: 15.0,
+                })
+                
+                // Set mock promotions data
+                setPromotedProducts([
+                    {
+                        id: 1,
+                        name: "Aceite de Oliva Extra Virgen",
+                        brand: "Capullo",
+                        category: "Aceites",
+                        views: 1247,
+                        clicks: 189,
+                        conversions: 45,
+                        revenue: 2340,
+                        status: "active",
+                    },
+                    {
+                        id: 2,
+                        name: "Arroz Integral Premium",
+                        brand: "Verde Valle",
+                        category: "Granos",
+                        views: 892,
+                        clicks: 134,
+                        conversions: 28,
+                        revenue: 1456,
+                        status: "active",
+                    },
+                ])
+
+                // Mock customer insights for now (can be added to API later)
+                setCustomerInsights([
+                    {
+                        demographic: "Familias con niños",
+                        percentage: 35,
+                        avgSpend: 450,
+                        topProducts: ["Cereales", "Lácteos", "Frutas"],
+                    },
+                    {
+                        demographic: "Adultos jóvenes",
+                        percentage: 28,
+                        avgSpend: 280,
+                        topProducts: ["Proteínas", "Snacks", "Bebidas"],
+                    },
+                    {
+                        demographic: "Adultos mayores",
+                        percentage: 22,
+                        avgSpend: 320,
+                        topProducts: ["Medicinas", "Conservas", "Té"],
+                    },
+                    {
+                        demographic: "Estudiantes",
+                        percentage: 15,
+                        avgSpend: 180,
+                        topProducts: ["Pasta", "Arroz", "Enlatados"],
+                    },
+                ])
+            }
         } finally {
-            setLoading(false)
+            if (!fetchOnlyProducts) {
+                setLoading(false)
+            }
         }
     }, [productsPerPage])
 
     const createPromotion = async (promotionData: PromotionData) => {
         try {
             const response = await axios.post('/api/b2b/promotions', promotionData)
-            // Refresh promotions list
-            fetchBusinessData()
+            // Refresh promotions list only (could be optimized further)
+            fetchBusinessData(1, false)
             return response.data
         } catch (err) {
             console.error('Error creating promotion:', err)
@@ -356,8 +404,8 @@ export default function BusinessPage() {
     const createProduct = async (productData: ProductData) => {
         try {
             const response = await axios.post('/api/b2b/business-products', productData)
-            // Refresh products list
-            fetchBusinessData()
+            // Refresh products list only
+            fetchBusinessData(1, true) // Go back to page 1 and only fetch products
             return response.data
         } catch (err) {
             console.error('Error creating product:', err)
@@ -431,7 +479,7 @@ export default function BusinessPage() {
 
     // Pagination handlers
     const handlePageChange = (page: number) => {
-        fetchBusinessData(page)
+        fetchBusinessData(page, true) // Only fetch products, not the full page data
     }
 
     const totalPages = Math.ceil(totalProducts / productsPerPage)
