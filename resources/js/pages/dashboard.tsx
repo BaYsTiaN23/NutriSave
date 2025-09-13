@@ -75,7 +75,7 @@ const mainFeatures = [
         borderColor: "border-[#8B4513]/20",
         features: ["Comparte recetas", "Tips de ahorro", "Intercambia menús"],
         description: "Conecta con otros usuarios y comparte experiencias",
-        href: "/community",
+        href: "/feed",
     },
 ]
 
