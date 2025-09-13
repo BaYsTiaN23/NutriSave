@@ -475,12 +475,12 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                             </div>
                         )}
 
-                        <div className="flex-1 overflow-hidden">
-                            <div className="h-full">
+                        <div className="flex-1 overflow-hidden flex flex-col">
+                            <div className="flex-1 overflow-hidden">
                                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full p-6">
                                     {/* Chat Area - Takes 3 columns for more width */}
-                                    <div className="lg:col-span-3 flex flex-col">
-                                        <Card className="flex-1 flex flex-col">
+                                    <div className="lg:col-span-3 flex flex-col min-h-0">
+                                        <Card className="flex-1 flex flex-col min-h-0">
                                             <CardHeader className="flex-shrink-0">
                                                 <CardTitle className="flex items-center gap-2">
                                                     <Sparkles className="w-5 h-5" />
@@ -494,8 +494,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                                 {/* Messages */}
                                                 <div
                                                     ref={messagesContainerRef}
-                                                    className="flex-1 overflow-y-auto px-6 py-4"
-                                                    style={{ maxHeight: 'calc(100vh - 300px)' }}
+                                                    className="flex-1 overflow-y-auto px-6 py-4 min-h-0"
                                                 >
                                                     <div className="space-y-4 pb-4">
                                                         {/* Show start chat button when no chat exists */}
@@ -665,8 +664,8 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                     </div>
 
                                     {/* Suggestions Sidebar - Takes 1 column */}
-                                    <div className="lg:col-span-1 hidden lg:block">
-                                        <div className="space-y-4 h-full overflow-y-auto">
+                                    <div className="lg:col-span-1 hidden lg:flex flex-col min-h-0">
+                                        <div className="space-y-4 flex-1 overflow-y-auto min-h-0">
                                             {/* Quick Actions */}
                                             <Collapsible open={isQuickActionsOpen} onOpenChange={setIsQuickActionsOpen}>
                                                 <Card className="transition-all duration-200">
