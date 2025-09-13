@@ -27,6 +27,9 @@ import {
 } from "lucide-react"
 import { Link } from "@inertiajs/react"
 import { useState } from "react"
+import { ActivityFeed } from "@/components/ActivityFeed"
+import { CommunityPosts } from "@/components/CommunityPosts"
+import { AIAssistant } from "@/components/AIAssistant"
 
 // Datos estáticos para notificaciones
 const staticNotifications = [
@@ -295,112 +298,91 @@ export default function DashboardPage() {
 
             {/* Welcome Section */}
             <section className="py-8 px-4">
-                <div className="container mx-auto">
+                <div className="max-w-7xl mx-auto">
                     <div className="mb-8">
-                        <h2 className="text-3xl font-bold text-[#8B4513] text-balance mb-2">¡Bienvenido de vuelta!</h2>
-                        <p className="text-lg text-[#8B4513]/80">
-                            Aquí tienes un resumen de tus ahorros y actividades recientes
+                        <h2 className="text-3xl font-bold text-green-600 text-balance mb-2">¡Bienvenido de vuelta!</h2>
+                        <p className="text-lg text-gray-600">
+                            Aquí tienes un resumen de tus ahorros y actividades recientes. Descubre nuevas formas de optimizar tu despensa y reducir el desperdicio.
                         </p>
                     </div>
 
                     {/* Quick Stats */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                        <Card className="bg-[#EFDBCD] border-[#8B4513]/20">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200 shadow-lg">
                             <CardContent className="p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-[#8B4513]/70">Ahorro este mes</p>
-                                        <p className="text-2xl font-bold text-[#8B4513]">$234.50</p>
+                                        <p className="text-sm text-orange-600">Ahorro este mes</p>
+                                        <p className="text-2xl font-bold text-orange-700">$234.50</p>
                                     </div>
-                                    <TrendingUp className="w-8 h-8 text-[#8B4513]" />
+                                    <TrendingUp className="w-8 h-8 text-orange-600" />
                                 </div>
                             </CardContent>
                         </Card>
-                        <Card className="bg-[#EFDBCD] border-[#8B4513]/20">
+                        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200 shadow-lg">
                             <CardContent className="p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-[#8B4513]/70">Productos en despensa</p>
-                                        <p className="text-2xl font-bold text-[#8B4513]">47</p>
+                                        <p className="text-sm text-green-600">Productos en despensa</p>
+                                        <p className="text-2xl font-bold text-green-700">47</p>
                                     </div>
-                                    <Package className="w-8 h-8 text-[#8B4513]" />
+                                    <Package className="w-8 h-8 text-green-600" />
                                 </div>
                             </CardContent>
                         </Card>
-                        <Card className="bg-[#EFDBCD] border-[#8B4513]/20">
+                        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 shadow-lg">
                             <CardContent className="p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-[#8B4513]/70">Ofertas disponibles</p>
-                                        <p className="text-2xl font-bold text-[#8B4513]">12</p>
+                                        <p className="text-sm text-blue-600">Ofertas disponibles</p>
+                                        <p className="text-2xl font-bold text-blue-700">12</p>
                                     </div>
-                                    <Sparkles className="w-8 h-8 text-[#8B4513]" />
+                                    <Sparkles className="w-8 h-8 text-blue-600" />
                                 </div>
                             </CardContent>
                         </Card>
-                        <Card className="bg-[#EFDBCD] border-[#8B4513]/20">
+                        <Card className="bg-gradient-to-br from-red-50 to-red-100 border-red-200 shadow-lg">
                             <CardContent className="p-6">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="text-sm text-[#8B4513]/70">Próximos a vencer</p>
-                                        <p className="text-2xl font-bold text-[#A0522D]">3</p>
+                                        <p className="text-sm text-red-600">Próximos a vencer</p>
+                                        <p className="text-2xl font-bold text-red-700">3</p>
                                     </div>
-                                    <Clock className="w-8 h-8 text-[#A0522D]" />
+                                    <Clock className="w-8 h-8 text-red-600" />
                                 </div>
                             </CardContent>
                         </Card>
                     </div>
                 </div>
             </section>
+            {/* Main Dashboard Grid */}
+            <div className="max-w-7xl mx-auto">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                    {/* Left Column - Primary Content */}
+                    <div className="lg:col-span-2 space-y-8">
 
-            {/* Main Features */}
-            <section className="py-8 px-4 bg-[#faf9f7]">
-                <div className="container mx-auto">
-                    <h3 className="text-3xl font-bold text-center text-[#8B4513] text-balance mb-12">Funcionalidades Principales</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
-                        {mainFeatures.map((feature) => {
-                            const IconComponent = feature.icon
-                            return (
-                                <Card
-                                    key={feature.id}
-                                    className={`group hover:-translate-y-1 transition-all duration-300 cursor-pointer ${feature.borderColor} ${feature.bgColor} border-2`}
-                                >
-                                    <CardHeader className="pb-4">
-                                        <div className="flex items-center justify-between mb-2">
-                                            <div className={`p-3 rounded-lg bg-white ${feature.color}`}>
-                                                <IconComponent className="w-8 h-8" />
-                                            </div>
-                                            <Badge variant="outline" className="text-xs bg-[#8B4513] text-white border-[#8B4513]">
-                                                Principal
-                                            </Badge>
-                                        </div>
-                                        <CardTitle className={`text-2xl group-hover:text-[#A0522D] transition-colors text-[#8B4513]`}>
-                                            {feature.title}
-                                        </CardTitle>
-                                        <CardDescription className="text-base text-[#8B4513]/80">{feature.description}</CardDescription>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <ul className="space-y-2 mb-6">
-                                            {feature.features.map((item, index) => (
-                                                <li key={index} className="flex items-center text-sm text-[#8B4513]/80">
-                                                    <div className="w-1.5 h-1.5 rounded-full bg-[#8B4513] mr-2" />
-                                                    {item}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                        <Link href={feature.href}>
-                                            <Button className="w-full bg-[#8B4513] hover:bg-[#A0522D] text-white" size="lg">
-                                                Comenzar Ahora
-                                                <ArrowRight className="ml-2 w-4 h-4" />
-                                            </Button>
-                                        </Link>
-                                    </CardContent>
-                                </Card>
-                            )
-                        })}
+
+                        {/* Community Posts */}
+                        <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-sm border border-white/20 shadow-warm">
+                            <CommunityPosts />
+                        </div>
+                    </div>
+
+                    {/* Right Column - Sidebar */}
+                    <div className="space-y-8">
+                        {/* AI Assistant */}
+                        <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-sm border border-white/20 shadow-warm">
+                            <AIAssistant />
+                        </div>
+
+                        {/* Activity Feed */}
+                        <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-sm border border-white/20 shadow-warm">
+                            <ActivityFeed />
+                        </div>
                     </div>
                 </div>
-            </section>
+            </div>
+
 
             {/* Modal de Notificaciones */}
             <Dialog open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
