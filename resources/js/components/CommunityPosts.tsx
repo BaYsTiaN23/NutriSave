@@ -147,10 +147,7 @@ export function CommunityPosts() {
                   <MessageSquare className="h-4 w-4" />
                   {post.comments}
                 </button>
-                <button className="flex items-center gap-2 hover:text-green-500 group-hover:scale-105 transition-all duration-200">
-                  <Share2 className="h-4 w-4" />
-                  {post.shares}
-                </button>
+
               </div>
             </div>
           </Link>
