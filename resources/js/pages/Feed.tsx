@@ -192,7 +192,7 @@ export default function Feed({ posts: initialPosts }: FeedProps) {
                     {/* Stats Bar */}
 
 
-                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 !mx-auto max-w-[1000px]">
                         {/* Sidebar */}
                         <div className="lg:col-span-1">
                             <Card className="mb-6 bg-[#EFDBCD] border-[#8B4513]/20">
@@ -270,7 +270,7 @@ export default function Feed({ posts: initialPosts }: FeedProps) {
                         </div>
 
                         {/* Feed de Publicaciones */}
-                        <div className="lg:col-span-3">
+                        <div className="lg:col-span-3 max-w-[600px]">
                             <div className="space-y-6">
                                 {filteredPosts.map((post) => (
                                     <Card key={post.id} className="hover:shadow-md transition-shadow bg-white border-[#8B4513]/20">
