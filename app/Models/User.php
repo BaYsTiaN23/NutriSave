@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'profile_image',
     ];
 
     /**
@@ -67,5 +68,37 @@ class User extends Authenticatable
     public function menus(): HasMany
     {
         return $this->hasMany(Menu::class);
+    }
+
+    /**
+     * Get all posts for the user.
+     */
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Get all comments for the user.
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
+     * Get all likes for the user.
+     */
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class);
+    }
+
+    /**
+     * Get all shares for the user.
+     */
+    public function shares(): HasMany
+    {
+        return $this->hasMany(Share::class);
     }
 }
