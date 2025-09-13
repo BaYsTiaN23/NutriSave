@@ -101,8 +101,8 @@ class ChatController extends Controller
         $isCurrentChat = str_contains($currentUrl, "/chat/{$chatId}");
 
         if ($isCurrentChat) {
-            // If deleting the current chat, redirect to home
-            return redirect()->route('home');
+            // If deleting the current chat, redirect to chat index
+            return redirect()->route('chat.index');
         } else {
             // If deleting from sidebar, redirect back to current page
             return redirect()->back();
