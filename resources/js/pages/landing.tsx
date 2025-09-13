@@ -126,7 +126,7 @@ const howItWorksSteps = [
 
 const FeaturesSection = () => {
     return (
-        <section className="py-16 px-6 bg-[#faf9f7]">
+        <section className="py-16 px-6 bg-[#fef8eb]">
             <div className="container mx-auto max-w-6xl">
                 <div className="text-center mb-12">
                     <h2 className="text-4xl md:text-5xl font-bold text-[#8B4513] mb-4">
@@ -176,7 +176,7 @@ export default function Landing() {
         <>
             <Head title="NutriSave - Tu Coach de Nutrición IA" />
 
-            <div className="min-h-screen bg-[#faf9f7]">
+            <div className="min-h-screen bg-[#fef8eb]">
                 {/* Header */}
                 <header className="bg-white border-b border-gray-200">
                     <div className="container mx-auto px-6 py-4 flex items-center justify-between">
