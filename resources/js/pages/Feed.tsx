@@ -24,6 +24,7 @@ interface Post {
     title: string;
     category: 'Recipes' | 'Organizations' | 'Offers' | 'Weekly Menu';
     content: string;
+    lugar?: string;
     tags?: string;
     image?: string;
     created_at: string;
@@ -302,6 +303,17 @@ export default function Feed({ posts: initialPosts }: FeedProps) {
                                             <p className="text-[#8B4513]/80 mb-4 text-pretty">
                                                 {truncateContent(post.content)}
                                             </p>
+
+                                            {/* Display lugar if exists */}
+                                            {post.lugar && (
+                                                <div className="mb-4 flex items-center text-[#8B4513]/70">
+                                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                                    </svg>
+                                                    <span className="text-sm italic">{post.lugar}</span>
+                                                </div>
+                                            )}
 
                                             {/* Display image if exists */}
                                             {post.image && (
