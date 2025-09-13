@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -50,5 +51,21 @@ class User extends Authenticatable
     public function chats(): HasMany
     {
         return $this->hasMany(Chat::class);
+    }
+
+    /**
+     * Get the user profile associated with the user.
+     */
+    public function userProfile(): HasOne
+    {
+        return $this->hasOne(UserProfile::class);
+    }
+
+    /**
+     * Get all menus for the user.
+     */
+    public function menus(): HasMany
+    {
+        return $this->hasMany(Menu::class);
     }
 }
