@@ -32,7 +32,7 @@ Route::middleware('auth:web')->get('/user', function (Request $request) {
 });
 
 // Public routes (for now, you can add auth middleware later)
-Route::apiResource('api-posts', PostsController::class);
+Route::apiResource('posts', PostsController::class);
 
 // Tip of the day route
 Route::get('tip-of-day', [TipOfDayController::class, 'index']);

@@ -3,6 +3,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { UserMenuContent } from '@/components/user-menu-content'
+import { useInitials } from '@/hooks/use-initials'
+import { usePage } from '@inertiajs/react'
 import {
     Utensils,
     ShoppingCart,
@@ -194,6 +198,9 @@ const featuredProducts = [
 ]
 
 export default function DashboardPage() {
+    const page = usePage();
+    const { auth } = page.props as any;
+    const getInitials = useInitials();
     const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [notifications, setNotifications] = useState(staticNotifications);
@@ -259,10 +266,28 @@ export default function DashboardPage() {
                             <Badge variant="secondary" className="hidden sm:flex bg-[#EFDBCD] text-[#8B4513] border-[#8B4513]/20">
                                 Actualizado hoy
                             </Badge>
-                            <Avatar>
-                                <AvatarImage src="/user-avatar.jpg" alt="Usuario" />
-                                <AvatarFallback className="bg-[#8B4513] text-white">U</AvatarFallback>
-                            </Avatar>
+                            {auth?.user ? (
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="ghost" className="size-10 rounded-full p-1 hover:bg-red-500/10">
+                                            <Avatar className="size-8 overflow-hidden rounded-full">
+                                                <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                                                <AvatarFallback className="rounded-lg bg-red-500 text-white">
+                                                    {getInitials(auth.user.name)}
+                                                </AvatarFallback>
+                                            </Avatar>
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent className="w-56 bg-gray-50 border-red-200 shadow-xl backdrop-blur-sm" align="end">
+                                        <UserMenuContent user={auth.user} />
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
+                            ) : (
+                                <Avatar>
+                                    <AvatarImage src="/user-avatar.jpg" alt="Usuario" />
+                                    <AvatarFallback className="bg-[#8B4513] text-white">U</AvatarFallback>
+                                </Avatar>
+                            )}
                         </div>
                     </div>
                 </div>

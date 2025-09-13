@@ -126,7 +126,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
 
                     <div className="ml-auto flex items-center space-x-2">
                         <div className="relative flex items-center space-x-1">
-                            <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer text-[#8B4513] hover:bg-[#8B4513]/10">
+                            <Button variant="ghost" size="icon" className="group h-9 w-9 cursor-pointer text-[red-500] hover:bg-[red-500]/10">
                                 <Search className="!size-5 opacity-80 group-hover:opacity-100" />
                             </Button>
                             <div className="hidden lg:flex">
@@ -138,7 +138,7 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                                                     href={item.href}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="group text-[#8B4513] ring-offset-background hover:bg-[#8B4513]/10 hover:text-[#8B4513] focus-visible:ring-[#8B4513] ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+                                                    className="group text-[red-500] ring-offset-background hover:bg-[red-500]/10 hover:text-[red-500] focus-visible:ring-[red-500] ml-1 inline-flex h-9 w-9 items-center justify-center rounded-md bg-transparent p-0 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
                                                 >
                                                     <span className="sr-only">{item.title}</span>
                                                     {item.icon && <Icon iconNode={item.icon} className="size-5 opacity-80 group-hover:opacity-100" />}
@@ -154,16 +154,16 @@ export function AppHeader({ breadcrumbs = [] }: AppHeaderProps) {
                         </div>
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" className="size-10 rounded-full p-1 hover:bg-[#8B4513]/10">
+                                <Button variant="ghost" className="size-10 rounded-full p-1 hover:bg-[red-500]/10">
                                     <Avatar className="size-8 overflow-hidden rounded-full">
                                         <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
-                                        <AvatarFallback className="rounded-lg bg-[#8B4513] text-white">
+                                        <AvatarFallback className="rounded-lg bg-[red-500] text-white">
                                             {getInitials(auth.user.name)}
                                         </AvatarFallback>
                                     </Avatar>
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="w-56 bg-[#faf9f7] border-[#8B4513]/40 shadow-xl backdrop-blur-sm" align="end">
+                            <DropdownMenuContent className="w-56 bg-[#faf9f7] border-[red-500]/40 shadow-xl backdrop-blur-sm" align="end">
                                 <UserMenuContent user={auth.user} />
                             </DropdownMenuContent>
                         </DropdownMenu>

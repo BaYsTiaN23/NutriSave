@@ -278,7 +278,7 @@ export default function Landing() {
                                     Comenzar Gratis
                                 </Button>
                             </Link>
-                            <Link href={route('community')}>
+                            <Link href={route('feed')}>
                                 <Button
                                     size="lg"
                                     className="bg-[#8B4513] hover:bg-[#A0522D] text-white px-8 py-3 text-lg"

@@ -4,6 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { UserMenuContent } from '@/components/user-menu-content';
+import { useInitials } from '@/hooks/use-initials';
 import { Heart, MessageCircle, Share2, User, ArrowLeft, Plus, Clock, Search, TrendingUp } from 'lucide-react';
 import axios from 'axios';
 import PostDetailModal from '@/components/PostDetailModal';
@@ -40,6 +43,7 @@ interface FeedProps {
 
 export default function Feed({ posts: initialPosts }: FeedProps) {
     const { auth } = usePage().props as any;
+    const getInitials = useInitials();
     const [posts, setPosts] = useState(initialPosts);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedPostId, setSelectedPostId] = useState<number | null>(null);
@@ -149,17 +153,35 @@ export default function Feed({ posts: initialPosts }: FeedProps) {
                             <div className="flex items-center space-x-4">
                                 <Button
                                     onClick={() => setIsCreateModalOpen(true)}
-                                    className="bg-[#8B4513] hover:bg-[#A0522D] text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+                                    className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2"
                                 >
                                     <Plus className="w-4 h-4" />
                                     Crear Post
                                 </Button>
-                                <Link
-                                    href="/profile"
-                                    className="text-[#8B4513] hover:text-[#A0522D] px-3 py-2 rounded-md text-sm font-medium"
-                                >
-                                    Perfil
-                                </Link>
+                                {auth?.user ? (
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="size-10 rounded-full p-1 hover:bg-orange-100">
+                                                <Avatar className="size-8 overflow-hidden rounded-full">
+                                                    <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                                                    <AvatarFallback className="rounded-lg bg-orange-600 text-white">
+                                                        {getInitials(auth.user.name)}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="w-56 bg-gray-50 border-orange-200 shadow-xl backdrop-blur-sm" align="end">
+                                            <UserMenuContent user={auth.user} />
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                ) : (
+                                    <Link
+                                        href="/profile"
+                                        className="text-orange-600 hover:text-orange-700 px-3 py-2 rounded-md text-sm font-medium"
+                                    >
+                                        Perfil
+                                    </Link>
+                                )}
                             </div>
                         </div>
                     </div>

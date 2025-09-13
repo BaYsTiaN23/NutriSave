@@ -26,30 +26,14 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                    <Link className="block w-full text-gray-800 font-medium hover:bg-accent hover:text-accent-foreground transition-colors duration-200 rounded-md" href="/profile" as="button" prefetch onClick={cleanup}>
-                        <UserIcon className="mr-2 h-4 w-4" />
-                        Mi Perfil
-                    </Link>
-                </DropdownMenuItem>
+
                 <DropdownMenuItem asChild>
                     <Link className="block w-full text-gray-800 font-medium hover:bg-accent hover:text-accent-foreground transition-colors duration-200 rounded-md" href="/settings" as="button" prefetch onClick={cleanup}>
                         <Settings className="mr-2 h-4 w-4" />
                         Configuración
                     </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link className="block w-full text-gray-800 font-medium hover:bg-accent hover:text-accent-foreground transition-colors duration-200 rounded-md" href="/notifications" as="button" prefetch onClick={cleanup}>
-                        <Bell className="mr-2 h-4 w-4" />
-                        Notificaciones
-                    </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                    <Link className="block w-full text-gray-800 font-medium hover:bg-accent hover:text-accent-foreground transition-colors duration-200 rounded-md" href="/help" as="button" prefetch onClick={cleanup}>
-                        <HelpCircle className="mr-2 h-4 w-4" />
-                        Ayuda
-                    </Link>
-                </DropdownMenuItem>
+
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

@@ -200,10 +200,10 @@ export default function BusinessPage() {
     }
 
     return (
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-white">
             {/* Header */}
-            <header className="border-b border-[#8B4513]/20 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-                <div className="container mx-auto px-4 py-4">
+            <header className="border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100 backdrop-blur-sm sticky top-0 z-50">
+                <div className="container mx-auto px-4 py-4 bg-white">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <Link href="/">
@@ -213,21 +213,21 @@ export default function BusinessPage() {
                                 </Button>
                             </Link>
                             <div className="flex items-center gap-2">
-                                <Building2 className="w-6 h-6 text-primary" />
+                                <Building2 className="w-6 h-6 text-red-600" />
                                 <div>
                                     <h1 className="text-xl font-bold text-gray-800">Panel Empresarial</h1>
-                                    <p className="text-sm text-gray-600">Soriana Express - Sucursal Centro</p>
+                                    <p className="text-sm text-red-600">Soriana Express - Sucursal Centro</p>
                                 </div>
                             </div>
                         </div>
                         <div className="flex gap-2">
-                            <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="">
+                            <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="border-red-300 text-red-700 hover:bg-red-50">
                                 <Upload className="w-4 h-4 mr-2" />
                                 Subir Productos
                             </Button>
                             <Dialog open={isNewPromotionOpen} onOpenChange={setIsNewPromotionOpen}>
                                 <DialogTrigger asChild>
-                                    <Button>
+                                    <Button className="bg-red-500 hover:bg-orange-500 text-white">
                                         <Plus className="w-4 h-4 mr-2" />
                                         Nueva Promoción
                                     </Button>
@@ -240,16 +240,16 @@ export default function BusinessPage() {
                                     <div className="grid gap-4 py-4">
                                         <div className="grid gap-2">
                                             <Label htmlFor="product-name" className="text-gray-800">Producto</Label>
-                                            <Input id="product-name" placeholder="Nombre del producto" className="border-[#8B4513]/30 focus:border-[#8B4513]" />
+                                            <Input id="product-name" placeholder="Nombre del producto" className="border-red-300 focus:border-red-500" />
                                         </div>
                                         <div className="grid gap-2">
                                             <Label htmlFor="discount" className="text-gray-800">Descuento (%)</Label>
-                                            <Input id="discount" type="number" placeholder="15" className="border-[#8B4513]/30 focus:border-[#8B4513]" />
+                                            <Input id="discount" type="number" placeholder="15" className="border-red-300 focus:border-red-500" />
                                         </div>
                                         <div className="grid gap-2">
                                             <Label htmlFor="target-audience" className="text-gray-800">Audiencia Objetivo</Label>
                                             <Select>
-                                                <SelectTrigger className="border-[#8B4513]/30 focus:border-[#8B4513]">
+                                                <SelectTrigger className="border-red-300 focus:border-red-500">
                                                     <SelectValue placeholder="Selecciona audiencia" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -263,22 +263,22 @@ export default function BusinessPage() {
                                         </div>
                                         <div className="grid gap-2">
                                             <Label htmlFor="budget" className="text-gray-800">Presupuesto Diario</Label>
-                                            <Input id="budget" type="number" placeholder="500" className="border-[#8B4513]/30 focus:border-[#8B4513]" />
+                                            <Input id="budget" type="number" placeholder="500" className="border-red-300 focus:border-red-500" />
                                         </div>
                                         <div className="grid gap-2">
                                             <Label htmlFor="description" className="text-gray-800">Descripción de la Oferta</Label>
                                             <Textarea
                                                 id="description"
                                                 placeholder="Describe los beneficios de tu promoción..."
-                                                className="min-h-20 border-[#8B4513]/30 focus:border-[#8B4513]"
+                                                className="min-h-20 border-red-300 focus:border-red-500"
                                             />
                                         </div>
                                     </div>
                                     <div className="flex justify-end gap-2">
-                                        <Button variant="outline" onClick={() => setIsNewPromotionOpen(false)} className="">
+                                        <Button variant="outline" onClick={() => setIsNewPromotionOpen(false)} className="border-red-300 text-red-700 hover:bg-red-50">
                                             Cancelar
                                         </Button>
-                                        <Button onClick={() => setIsNewPromotionOpen(false)} className="bg-[#8B4513] hover:bg-[#A0522D] text-white">
+                                        <Button onClick={() => setIsNewPromotionOpen(false)} className="bg-red-500 hover:bg-orange-500 text-white">
                                             Crear Promoción
                                         </Button>
                                     </div>
@@ -291,9 +291,9 @@ export default function BusinessPage() {
 
             <input ref={fileInputRef} type="file" accept=".csv,.xlsx,.xls" onChange={handleFileUpload} className="hidden" />
 
-            <div className="container mx-auto px-4 py-8">
+            <div className="container mx-auto px-4 py-8 bg-white">
                 {(uploadedFile || showPreview) && (
-                    <Card className="mb-8 bg-white border-[#8B4513]/20">
+                    <Card className="mb-8 bg-white border-red-200">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2 text-gray-800">
                                 <FileSpreadsheet className="w-5 h-5" />
@@ -323,12 +323,12 @@ export default function BusinessPage() {
                                         <Badge variant="secondary" className="bg-secondary text-gray-800">{previewData.length} productos encontrados</Badge>
                                     </div>
 
-                                    <div className="bg-secondary/30 rounded-lg p-4">
+                                    <div className="bg-red-50 rounded-lg p-4">
                                         <h4 className="font-medium mb-3 text-gray-800">Vista Previa de Datos</h4>
                                         <div className="overflow-x-auto">
                                             <table className="w-full text-sm">
                                                 <thead>
-                                                    <tr className="border-b border-[#8B4513]/20">
+                                                    <tr className="border-b border-red-200">
                                                         <th className="text-left p-2 text-gray-800">Nombre</th>
                                                         <th className="text-left p-2 text-gray-800">Marca</th>
                                                         <th className="text-left p-2 text-gray-800">Categoría</th>
@@ -338,7 +338,7 @@ export default function BusinessPage() {
                                                 </thead>
                                                 <tbody>
                                                     {previewData.map((product, index) => (
-                                                        <tr key={index} className="border-b border-[#8B4513]/10">
+                                                        <tr key={index} className="border-b border-red-100">
                                                             <td className="p-2 text-gray-800">{product.nombre}</td>
                                                             <td className="p-2 text-gray-800">{product.marca}</td>
                                                             <td className="p-2 text-gray-800">{product.categoria}</td>
@@ -351,16 +351,16 @@ export default function BusinessPage() {
                                         </div>
                                     </div>
 
-                                    <div className="flex items-center gap-2 p-3 bg-secondary rounded-lg">
-                                        <AlertCircle className="w-4 h-4 text-gray-800" />
-                                        <p className="text-sm text-gray-800">
+                                    <div className="flex items-center gap-2 p-3 bg-red-50 rounded-lg">
+                                        <AlertCircle className="w-4 h-4 text-red-600" />
+                                        <p className="text-sm text-red-800">
                                             Los datos se importarán directamente a tu base de datos de Supabase. Revisa la información antes
                                             de confirmar.
                                         </p>
                                     </div>
 
                                     <div className="flex gap-2">
-                                        <Button onClick={confirmImport} className="bg-[#8B4513] hover:bg-[#A0522D] text-white">
+                                        <Button onClick={confirmImport} className="bg-red-500 hover:bg-orange-500 text-white">
                                             <CheckCircle className="w-4 h-4 mr-2" />
                                             Confirmar Importación
                                         </Button>
@@ -371,11 +371,11 @@ export default function BusinessPage() {
                                                 setUploadedFile(null)
                                                 setPreviewData([])
                                             }}
-                                            className=""
+                                            className="border-red-300 text-red-700 hover:bg-red-50"
                                         >
                                             Cancelar
                                         </Button>
-                                        <Button variant="outline" className="">
+                                        <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-50">
                                             <Download className="w-4 h-4 mr-2" />
                                             Descargar Plantilla
                                         </Button>
@@ -388,7 +388,7 @@ export default function BusinessPage() {
 
                 {/* Stats Overview */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    <Card className="bg-white border-[#8B4513]/20">
+                    <Card className="bg-white border-red-200 hover:shadow-lg transition-shadow">
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -396,11 +396,11 @@ export default function BusinessPage() {
                                     <p className="text-2xl font-bold text-gray-800">{businessStats.totalViews.toLocaleString()}</p>
                                     <p className="text-xs text-green-600">+12% vs mes anterior</p>
                                 </div>
-                                <Eye className="w-8 h-8 text-gray-800" />
+                                <Eye className="w-8 h-8 text-red-600" />
                             </div>
                         </CardContent>
                     </Card>
-                    <Card className="bg-white border-[#8B4513]/20">
+                    <Card className="bg-white border-red-200 hover:shadow-lg transition-shadow">
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -408,11 +408,11 @@ export default function BusinessPage() {
                                     <p className="text-2xl font-bold text-gray-800">{businessStats.totalClicks.toLocaleString()}</p>
                                     <p className="text-xs text-green-600">CTR: {businessStats.ctr}%</p>
                                 </div>
-                                <Target className="w-8 h-8 text-gray-800" />
+                                <Target className="w-8 h-8 text-red-600" />
                             </div>
                         </CardContent>
                     </Card>
-                    <Card className="bg-white border-[#8B4513]/20">
+                    <Card className="bg-white border-red-200 hover:shadow-lg transition-shadow">
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -420,11 +420,11 @@ export default function BusinessPage() {
                                     <p className="text-2xl font-bold text-gray-800">{businessStats.conversions}</p>
                                     <p className="text-xs text-green-600">{businessStats.conversionRate}% tasa</p>
                                 </div>
-                                <ShoppingCart className="w-8 h-8 text-gray-800" />
+                                <ShoppingCart className="w-8 h-8 text-red-600" />
                             </div>
                         </CardContent>
                     </Card>
-                    <Card className="bg-white border-[#8B4513]/20">
+                    <Card className="bg-white border-red-200 hover:shadow-lg transition-shadow">
                         <CardContent className="p-4">
                             <div className="flex items-center justify-between">
                                 <div>
@@ -432,28 +432,28 @@ export default function BusinessPage() {
                                     <p className="text-2xl font-bold text-gray-800">${businessStats.revenue.toLocaleString()}</p>
                                     <p className="text-xs text-green-600">+8% vs mes anterior</p>
                                 </div>
-                                <DollarSign className="w-8 h-8 text-gray-800" />
+                                <DollarSign className="w-8 h-8 text-red-600" />
                             </div>
                         </CardContent>
                     </Card>
                 </div>
 
                 <Tabs defaultValue="products" className="space-y-6">
-                    <TabsList className="grid w-full grid-cols-5 bg-secondary">
-                        <TabsTrigger value="products" className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white text-gray-800">Productos</TabsTrigger>
-                        <TabsTrigger value="promotions" className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white text-gray-800">Promociones</TabsTrigger>
-                        <TabsTrigger value="analytics" className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white text-gray-800">Analíticas</TabsTrigger>
-                        <TabsTrigger value="insights" className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white text-gray-800">Insights</TabsTrigger>
-                        <TabsTrigger value="billing" className="data-[state=active]:bg-[#8B4513] data-[state=active]:text-white text-gray-800">Facturación</TabsTrigger>
+                    <TabsList className="grid w-full grid-cols-5 bg-red-50">
+                        <TabsTrigger value="products" className="data-[state=active]:bg-red-500 data-[state=active]:text-white text-gray-800 hover:bg-red-100">Productos</TabsTrigger>
+                        <TabsTrigger value="promotions" className="data-[state=active]:bg-red-500 data-[state=active]:text-white text-gray-800 hover:bg-red-100">Promociones</TabsTrigger>
+                        <TabsTrigger value="analytics" className="data-[state=active]:bg-red-500 data-[state=active]:text-white text-gray-800 hover:bg-red-100">Analíticas</TabsTrigger>
+                        <TabsTrigger value="insights" className="data-[state=active]:bg-red-500 data-[state=active]:text-white text-gray-800 hover:bg-red-100">Insights</TabsTrigger>
+                        <TabsTrigger value="billing" className="data-[state=active]:bg-red-500 data-[state=active]:text-white text-gray-800 hover:bg-red-100">Facturación</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="products">
-                        <Card className="bg-white border-[#8B4513]/20">
+                        <Card className="bg-white border-red-200">
                             <CardHeader>
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <CardTitle className="flex items-center gap-2 text-gray-800">
-                                            <FileSpreadsheet className="w-5 h-5" />
+                                            <FileSpreadsheet className="w-5 h-5 text-red-600" />
                                             Gestión de Productos
                                         </CardTitle>
                                         <CardDescription className="text-gray-600">
@@ -461,11 +461,11 @@ export default function BusinessPage() {
                                         </CardDescription>
                                     </div>
                                     <div className="flex gap-2">
-                                        <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="">
+                                        <Button variant="outline" onClick={() => fileInputRef.current?.click()} className="border-red-300 text-red-700 hover:bg-red-50">
                                             <Upload className="w-4 h-4 mr-2" />
                                             Importar CSV/XLSX
                                         </Button>
-                                        <Button>
+                                        <Button className="bg-red-500 hover:bg-orange-500 text-white">
                                             <Plus className="w-4 h-4 mr-2" />
                                             Agregar Producto
                                         </Button>
@@ -475,33 +475,33 @@ export default function BusinessPage() {
                             <CardContent>
                                 <div className="space-y-4">
                                     {/* Formato recomendado */}
-                                    <div className="bg-secondary border border-[#8B4513]/20 rounded-lg p-4">
+                                    <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                                         <h4 className="font-medium text-gray-800 mb-2">Formato Recomendado para CSV/XLSX</h4>
                                         <p className="text-sm text-gray-600 mb-3">
                                             Para una importación exitosa, asegúrate de incluir estas columnas:
                                         </p>
                                         <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-8 gap-2 text-xs">
-                                            <Badge variant="outline" className="border-[#8B4513]/30 text-gray-800">nombre</Badge>
-                                            <Badge variant="outline" className="border-[#8B4513]/30 text-gray-800">marca</Badge>
-                                            <Badge variant="outline" className="border-[#8B4513]/30 text-gray-800">categoria</Badge>
-                                            <Badge variant="outline" className="border-[#8B4513]/30 text-gray-800">precio</Badge>
-                                            <Badge variant="outline" className="border-[#8B4513]/30 text-gray-800">stock</Badge>
-                                            <Badge variant="outline" className="border-[#8B4513]/30 text-gray-800">sku</Badge>
-                                            <Badge variant="outline" className="border-[#8B4513]/30 text-gray-800">descripcion</Badge>
-                                            <Badge variant="outline" className="border-[#8B4513]/30 text-gray-800">imagen_url</Badge>
+                                            <Badge variant="outline" className="border-red-300 text-red-800">nombre</Badge>
+                                            <Badge variant="outline" className="border-red-300 text-red-800">marca</Badge>
+                                            <Badge variant="outline" className="border-red-300 text-red-800">categoria</Badge>
+                                            <Badge variant="outline" className="border-red-300 text-red-800">precio</Badge>
+                                            <Badge variant="outline" className="border-red-300 text-red-800">stock</Badge>
+                                            <Badge variant="outline" className="border-red-300 text-red-800">sku</Badge>
+                                            <Badge variant="outline" className="border-red-300 text-red-800">descripcion</Badge>
+                                            <Badge variant="outline" className="border-red-300 text-red-800">imagen_url</Badge>
                                         </div>
                                     </div>
 
                                     {/* Lista de productos */}
                                     <div className="space-y-3">
                                         {importedProducts.map((product) => (
-                                            <Card key={product.id} className="border-l-4 border-l-[#8B4513] bg-white">
+                                            <Card key={product.id} className="border-l-4 border-l-red-500 bg-white hover:shadow-md transition-shadow">
                                                 <CardContent className="p-4">
                                                     <div className="flex items-center justify-between">
                                                         <div className="flex-1">
                                                             <div className="flex items-center gap-3 mb-2">
                                                                 <h4 className="font-semibold text-gray-800">{product.name}</h4>
-                                                                <Badge variant={product.status === "active" ? "default" : "secondary"} className={product.status === "active" ? "bg-[#8B4513] text-white" : "bg-secondary text-gray-800"}>
+                                                                <Badge variant={product.status === "active" ? "default" : "secondary"} className={product.status === "active" ? "bg-red-500 text-white" : "bg-gray-100 text-gray-800"}>
                                                                     {product.status === "active" ? "Activo" : "Inactivo"}
                                                                 </Badge>
                                                             </div>
@@ -529,7 +529,7 @@ export default function BusinessPage() {
                                                             </div>
                                                         </div>
                                                         <div className="flex gap-2">
-                                                            <Button variant="outline" size="sm" className="">
+                                                            <Button variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-50">
                                                                 <Edit className="w-4 h-4" />
                                                             </Button>
                                                             <Button variant="outline" size="sm" className="border-red-300 text-red-600 hover:bg-red-50">
@@ -548,10 +548,10 @@ export default function BusinessPage() {
 
                     {/* Promotions Tab */}
                     <TabsContent value="promotions">
-                        <Card className="bg-white border-[#8B4513]/20">
+                        <Card className="bg-white border-red-200">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-gray-800">
-                                    <Star className="w-5 h-5" />
+                                    <Star className="w-5 h-5 text-red-600" />
                                     Productos Promocionados
                                 </CardTitle>
                                 <CardDescription className="text-gray-600">Gestiona tus promociones activas y su rendimiento</CardDescription>
@@ -559,7 +559,7 @@ export default function BusinessPage() {
                             <CardContent>
                                 <div className="space-y-4">
                                     {promotedProducts.map((product) => (
-                                        <Card key={product.id} className="border-l-4 border-l-[#8B4513] bg-white">
+                                        <Card key={product.id} className="border-l-4 border-l-red-500 bg-white hover:shadow-md transition-shadow">
                                             <CardContent className="p-4">
                                                 <div className="flex items-center justify-between mb-4">
                                                     <div>
@@ -568,7 +568,7 @@ export default function BusinessPage() {
                                                             {product.brand} • {product.category}
                                                         </p>
                                                     </div>
-                                                    <Badge variant={product.status === "active" ? "default" : "secondary"} className={product.status === "active" ? "bg-[#8B4513] text-white" : "bg-secondary text-gray-800"}>
+                                                    <Badge variant={product.status === "active" ? "default" : "secondary"} className={product.status === "active" ? "bg-red-500 text-white" : "bg-gray-100 text-gray-800"}>
                                                         {product.status === "active" ? "Activa" : "Pausada"}
                                                     </Badge>
                                                 </div>
@@ -591,13 +591,13 @@ export default function BusinessPage() {
                                                     </div>
                                                 </div>
                                                 <div className="flex gap-2 mt-4">
-                                                    <Button variant="outline" size="sm" className="">
+                                                    <Button variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-50">
                                                         Editar
                                                     </Button>
-                                                    <Button variant="outline" size="sm" className="">
+                                                    <Button variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-50">
                                                         {product.status === "active" ? "Pausar" : "Activar"}
                                                     </Button>
-                                                    <Button variant="outline" size="sm" className="">
+                                                    <Button variant="outline" size="sm" className="border-red-300 text-red-700 hover:bg-red-50">
                                                         Ver Detalles
                                                     </Button>
                                                 </div>
@@ -612,10 +612,10 @@ export default function BusinessPage() {
                     {/* Analytics Tab */}
                     <TabsContent value="analytics">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <Card className="bg-white border-[#8B4513]/20">
+                            <Card className="bg-white border-red-200">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-gray-800">
-                                        <BarChart3 className="w-5 h-5" />
+                                        <BarChart3 className="w-5 h-5 text-red-600" />
                                         Rendimiento Semanal
                                     </CardTitle>
                                 </CardHeader>
@@ -660,10 +660,10 @@ export default function BusinessPage() {
                                 </CardContent>
                             </Card>
 
-                            <Card className="bg-white border-[#8B4513]/20">
+                            <Card className="bg-white border-red-200">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-gray-800">
-                                        <TrendingUp className="w-5 h-5" />
+                                        <TrendingUp className="w-5 h-5 text-red-600" />
                                         Productos Más Vistos
                                     </CardTitle>
                                 </CardHeader>
@@ -705,10 +705,10 @@ export default function BusinessPage() {
 
                     {/* Insights Tab */}
                     <TabsContent value="insights">
-                        <Card className="bg-white border-[#8B4513]/20">
+                        <Card className="bg-white border-red-200">
                             <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-gray-800">
-                                    <Users className="w-5 h-5" />
+                                    <Users className="w-5 h-5 text-red-600" />
                                     Insights de Clientes
                                 </CardTitle>
                                 <CardDescription className="text-gray-600">Conoce mejor a tu audiencia y sus patrones de compra</CardDescription>
@@ -716,11 +716,11 @@ export default function BusinessPage() {
                             <CardContent>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     {customerInsights.map((insight, index) => (
-                                        <Card key={index} className="border-l-4 border-l-[#8B4513] bg-white">
+                                        <Card key={index} className="border-l-4 border-l-red-500 bg-white hover:shadow-md transition-shadow">
                                             <CardContent className="p-4">
                                                 <div className="flex items-center justify-between mb-3">
                                                     <h4 className="font-semibold text-gray-800">{insight.demographic}</h4>
-                                                    <Badge variant="outline" className="border-[#8B4513]/30 text-gray-800">{insight.percentage}%</Badge>
+                                                    <Badge variant="outline" className="border-red-300 text-red-800">{insight.percentage}%</Badge>
                                                 </div>
                                                 <div className="space-y-2">
                                                     <div className="flex justify-between text-sm">
@@ -731,7 +731,7 @@ export default function BusinessPage() {
                                                         <p className="text-sm text-gray-600 mb-1">Productos favoritos:</p>
                                                         <div className="flex flex-wrap gap-1">
                                                             {insight.topProducts.map((product, idx) => (
-                                                                <Badge key={idx} variant="secondary" className="text-xs bg-secondary text-gray-800">
+                                                                <Badge key={idx} variant="secondary" className="text-xs bg-red-100 text-red-800">
                                                                     {product}
                                                                 </Badge>
                                                             ))}
@@ -749,10 +749,10 @@ export default function BusinessPage() {
                     {/* Billing Tab */}
                     <TabsContent value="billing">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <Card className="bg-white border-[#8B4513]/20">
+                            <Card className="bg-white border-red-200">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-gray-800">
-                                        <DollarSign className="w-5 h-5" />
+                                        <DollarSign className="w-5 h-5 text-red-600" />
                                         Plan Actual
                                     </CardTitle>
                                 </CardHeader>
@@ -760,7 +760,7 @@ export default function BusinessPage() {
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-between">
                                             <span className="font-medium text-gray-800">Plan Empresarial</span>
-                                            <Badge variant="default" className="bg-[#8B4513] text-white">Activo</Badge>
+                                            <Badge variant="default" className="bg-red-500 text-white">Activo</Badge>
                                         </div>
                                         <div className="space-y-2">
                                             <div className="flex justify-between text-sm">
@@ -776,37 +776,37 @@ export default function BusinessPage() {
                                                 <span className="font-medium text-gray-800">50/mes</span>
                                             </div>
                                         </div>
-                                        <Button className="w-full bg-transparent border-[#8B4513]/30 text-gray-800 hover:bg-[#8B4513]/10" variant="outline">
+                                        <Button className="w-full bg-transparent border-red-300 text-red-700 hover:bg-red-50" variant="outline">
                                             Actualizar Plan
                                         </Button>
                                     </div>
                                 </CardContent>
                             </Card>
 
-                            <Card className="bg-white border-[#8B4513]/20">
+                            <Card className="bg-white border-red-200">
                                 <CardHeader>
                                     <CardTitle className="flex items-center gap-2 text-gray-800">
-                                        <Calendar className="w-5 h-5" />
+                                        <Calendar className="w-5 h-5 text-red-600" />
                                         Historial de Pagos
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-3">
-                                        <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+                                        <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                                             <div>
                                                 <p className="font-medium text-gray-800">Enero 2024</p>
                                                 <p className="text-sm text-gray-600">Plan Empresarial</p>
                                             </div>
                                             <span className="font-medium text-gray-800">$299</span>
                                         </div>
-                                        <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+                                        <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                                             <div>
                                                 <p className="font-medium text-gray-800">Diciembre 2023</p>
                                                 <p className="text-sm text-gray-600">Plan Empresarial</p>
                                             </div>
                                             <span className="font-medium text-gray-800">$299</span>
                                         </div>
-                                        <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+                                        <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
                                             <div>
                                                 <p className="font-medium text-gray-800">Noviembre 2023</p>
                                                 <p className="text-sm text-gray-600">Plan Empresarial</p>
@@ -814,7 +814,7 @@ export default function BusinessPage() {
                                             <span className="font-medium text-gray-800">$299</span>
                                         </div>
                                     </div>
-                                    <Button className="w-full mt-4 bg-transparent border-[#8B4513]/30 text-gray-800 hover:bg-[#8B4513]/10" variant="outline">
+                                    <Button className="w-full mt-4 bg-transparent border-red-300 text-red-700 hover:bg-red-50" variant="outline">
                                         Ver Historial Completo
                                     </Button>
                                 </CardContent>
