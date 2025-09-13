@@ -146,12 +146,12 @@ export default function Register() {
                 return (
                     <div className="space-y-4">
                         <div className="text-center mb-6">
-                            <h3 className="text-lg font-semibold">Account Information</h3>
-                            <p className="text-sm text-muted-foreground">Let's start with your basic account details</p>
+                            <h3 className="text-lg font-semibold">Información de la Cuenta</h3>
+                            <p className="text-sm text-muted-foreground">Comencemos con los detalles básicos de tu cuenta</p>
                         </div>
                         
                         <div className="grid gap-2">
-                            <Label htmlFor="name">Name</Label>
+                            <Label htmlFor="name">Nombre</Label>
                             <Input
                                 id="name"
                                 type="text"
@@ -162,13 +162,13 @@ export default function Register() {
                                 value={data.name}
                                 onChange={(e) => setData('name', e.target.value)}
                                 disabled={processing}
-                                placeholder="Full name"
+                                placeholder="Nombre completo"
                             />
                             <InputError message={errors.name} className="mt-2" />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="email">Email address</Label>
+                            <Label htmlFor="email">Correo electrónico</Label>
                             <Input
                                 id="email"
                                 type="email"
@@ -178,13 +178,13 @@ export default function Register() {
                                 value={data.email}
                                 onChange={(e) => setData('email', e.target.value)}
                                 disabled={processing}
-                                placeholder="email@example.com"
+                                placeholder="correo@ejemplo.com"
                             />
                             <InputError message={errors.email} />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password">Password</Label>
+                            <Label htmlFor="password">Contraseña</Label>
                             <Input
                                 id="password"
                                 type="password"
@@ -194,13 +194,13 @@ export default function Register() {
                                 value={data.password}
                                 onChange={(e) => setData('password', e.target.value)}
                                 disabled={processing}
-                                placeholder="Password"
+                                placeholder="Contraseña"
                             />
                             <InputError message={errors.password} />
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="password_confirmation">Confirm password</Label>
+                            <Label htmlFor="password_confirmation">Confirmar contraseña</Label>
                             <Input
                                 id="password_confirmation"
                                 type="password"
@@ -210,7 +210,7 @@ export default function Register() {
                                 value={data.password_confirmation}
                                 onChange={(e) => setData('password_confirmation', e.target.value)}
                                 disabled={processing}
-                                placeholder="Confirm password"
+                                placeholder="Confirmar contraseña"
                             />
                             <InputError message={errors.password_confirmation} />
                         </div>
@@ -221,23 +221,23 @@ export default function Register() {
                 return (
                     <div className="space-y-4">
                         <div className="text-center mb-6">
-                            <h3 className="text-lg font-semibold">Health Goal</h3>
-                            <p className="text-sm text-muted-foreground">What's your primary health objective?</p>
+                            <h3 className="text-lg font-semibold">Objetivo de Salud</h3>
+                            <p className="text-sm text-muted-foreground">¿Cuál es tu objetivo principal de salud?</p>
                         </div>
                         
                         <div className="grid gap-2">
-                            <Label htmlFor="goal">Primary Goal</Label>
+                            <Label htmlFor="goal">Objetivo Principal</Label>
                             <Select value={data.goal} onValueChange={(value) => setData('goal', value)} disabled={processing}>
                                 <SelectTrigger>
-                                    <SelectValue placeholder="Select your primary goal" />
+                                    <SelectValue placeholder="Selecciona tu objetivo principal" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="weight_loss">Weight Loss</SelectItem>
-                                    <SelectItem value="muscle_gain">Muscle Gain</SelectItem>
-                                    <SelectItem value="diabetes_control">Diabetes Control</SelectItem>
-                                    <SelectItem value="hypertension_control">Hypertension Control</SelectItem>
-                                    <SelectItem value="balanced">Balanced Diet</SelectItem>
-                                    <SelectItem value="custom">Custom</SelectItem>
+                                    <SelectItem value="weight_loss">Pérdida de Peso</SelectItem>
+                                    <SelectItem value="muscle_gain">Ganancia Muscular</SelectItem>
+                                    <SelectItem value="diabetes_control">Control de Diabetes</SelectItem>
+                                    <SelectItem value="hypertension_control">Control de Hipertensión</SelectItem>
+                                    <SelectItem value="balanced">Dieta Balanceada</SelectItem>
+                                    <SelectItem value="custom">Personalizado</SelectItem>
                                 </SelectContent>
                             </Select>
                             <InputError message={errors.goal} />
@@ -249,13 +249,13 @@ export default function Register() {
                 return (
                     <div className="space-y-4">
                         <div className="text-center mb-6">
-                            <h3 className="text-lg font-semibold">Personal Details</h3>
-                            <p className="text-sm text-muted-foreground">Help us personalize your nutrition plan (optional)</p>
+                            <h3 className="text-lg font-semibold">Detalles Personales</h3>
+                            <p className="text-sm text-muted-foreground">Ayúdanos a personalizar tu plan nutricional (opcional)</p>
                         </div>
                         
                         <div className="grid grid-cols-3 gap-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="age">Age</Label>
+                                <Label htmlFor="age">Edad</Label>
                                 <Input
                                     id="age"
                                     type="number"
@@ -264,13 +264,13 @@ export default function Register() {
                                     value={data.age || ''}
                                     onChange={(e) => setData('age', e.target.value ? parseInt(e.target.value) : undefined)}
                                     disabled={processing}
-                                    placeholder="Age"
+                                    placeholder="Edad"
                                 />
                                 <InputError message={errors.age} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="weight">Weight (kg)</Label>
+                                <Label htmlFor="weight">Peso (kg)</Label>
                                 <Input
                                     id="weight"
                                     type="number"
@@ -280,13 +280,13 @@ export default function Register() {
                                     value={data.weight || ''}
                                     onChange={(e) => setData('weight', e.target.value ? parseFloat(e.target.value) : undefined)}
                                     disabled={processing}
-                                    placeholder="Weight"
+                                    placeholder="Peso"
                                 />
                                 <InputError message={errors.weight} />
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="height">Height (cm)</Label>
+                                <Label htmlFor="height">Altura (cm)</Label>
                                 <Input
                                     id="height"
                                     type="number"
@@ -296,14 +296,14 @@ export default function Register() {
                                     value={data.height || ''}
                                     onChange={(e) => setData('height', e.target.value ? parseFloat(e.target.value) : undefined)}
                                     disabled={processing}
-                                    placeholder="Height"
+                                    placeholder="Altura"
                                 />
                                 <InputError message={errors.height} />
                             </div>
                         </div>
 
                         <div className="grid gap-2">
-                            <Label htmlFor="weekly_budget">Weekly Budget ($)</Label>
+                            <Label htmlFor="weekly_budget">Presupuesto Semanal ($)</Label>
                             <Input
                                 id="weekly_budget"
                                 type="number"
@@ -312,7 +312,7 @@ export default function Register() {
                                 value={data.weekly_budget || ''}
                                 onChange={(e) => setData('weekly_budget', e.target.value ? parseFloat(e.target.value) : undefined)}
                                 disabled={processing}
-                                placeholder="Weekly food budget"
+                                placeholder="Presupuesto semanal para comida"
                             />
                             <InputError message={errors.weekly_budget} />
                         </div>
@@ -323,13 +323,13 @@ export default function Register() {
                 return (
                     <div className="space-y-6">
                         <div className="text-center mb-6">
-                            <h3 className="text-lg font-semibold">Health & Dietary Information</h3>
-                            <p className="text-sm text-muted-foreground">Tell us about your health conditions and preferences (optional)</p>
+                            <h3 className="text-lg font-semibold">Información de Salud y Dieta</h3>
+                            <p className="text-sm text-muted-foreground">Cuéntanos sobre tus condiciones de salud y preferencias (opcional)</p>
                         </div>
 
                         {/* Medical Conditions */}
                         <div className="space-y-4">
-                            <h4 className="font-medium">Medical Conditions</h4>
+                            <h4 className="font-medium">Condiciones Médicas</h4>
                             <div className="grid grid-cols-2 gap-3">
                                 {medicalConditions.map((condition) => (
                                     <div key={condition} className="flex items-center space-x-2">
@@ -355,7 +355,7 @@ export default function Register() {
                             <div className="space-y-2">
                                 <div className="flex gap-2">
                                     <Input
-                                        placeholder="Add custom medical condition"
+                                        placeholder="Agregar condición médica personalizada"
                                         value={customMedicalCondition}
                                         onChange={(e) => setCustomMedicalCondition(e.target.value)}
                                         onKeyPress={(e) => {
@@ -405,7 +405,7 @@ export default function Register() {
 
                         {/* Dietary Preferences */}
                         <div className="space-y-4">
-                            <h4 className="font-medium">Dietary Preferences</h4>
+                            <h4 className="font-medium">Preferencias Dietéticas</h4>
                             <div className="grid grid-cols-2 gap-3">
                                 {dietaryPrefs.map((pref) => (
                                     <div key={pref} className="flex items-center space-x-2">
@@ -431,7 +431,7 @@ export default function Register() {
                             <div className="space-y-2">
                                 <div className="flex gap-2">
                                     <Input
-                                        placeholder="Add custom dietary preference"
+                                        placeholder="Agregar preferencia dietética personalizada"
                                         value={customDietaryPref}
                                         onChange={(e) => setCustomDietaryPref(e.target.value)}
                                         onKeyPress={(e) => {
@@ -481,7 +481,7 @@ export default function Register() {
 
                         {/* Allergens */}
                         <div className="space-y-4">
-                            <h4 className="font-medium">Allergens</h4>
+                            <h4 className="font-medium">Alérgenos</h4>
                             <div className="grid grid-cols-2 gap-3">
                                 {commonAllergens.map((allergen) => (
                                     <div key={allergen} className="flex items-center space-x-2">
@@ -507,7 +507,7 @@ export default function Register() {
                             <div className="space-y-2">
                                 <div className="flex gap-2">
                                     <Input
-                                        placeholder="Add custom allergen"
+                                        placeholder="Agregar alérgeno personalizado"
                                         value={customAllergen}
                                         onChange={(e) => setCustomAllergen(e.target.value)}
                                         onKeyPress={(e) => {
@@ -563,13 +563,13 @@ export default function Register() {
     };
 
     return (
-        <AuthLayout title="Create an account" description="Enter your details below to create your account">
-            <Head title="Register" />
+        <AuthLayout title="Crear una cuenta" description="Ingresa tus datos para crear tu cuenta">
+            <Head title="Registro" />
             
             {/* Progress indicator */}
             <div className="mb-8">
                 <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-muted-foreground">Step {currentStep} of {totalSteps}</span>
+                    <span className="text-sm text-muted-foreground">Paso {currentStep} de {totalSteps}</span>
                     <span className="text-sm text-muted-foreground">{Math.round((currentStep / totalSteps) * 100)}%</span>
                 </div>
                 <div className="w-full bg-muted h-2 rounded-full">
@@ -595,7 +595,7 @@ export default function Register() {
                         className="flex items-center gap-2"
                     >
                         <ChevronLeft className="h-4 w-4" />
-                        Previous
+                        Anterior
                     </Button>
 
                     {currentStep < totalSteps ? (
@@ -605,7 +605,7 @@ export default function Register() {
                             disabled={!validateStep(currentStep) || processing}
                             className="flex items-center gap-2"
                         >
-                            Continue
+                            Continuar
                             <ChevronRight className="h-4 w-4" />
                         </Button>
                     ) : (
@@ -615,15 +615,15 @@ export default function Register() {
                             className="flex items-center gap-2"
                         >
                             {processing && <LoaderCircle className="h-4 w-4 animate-spin" />}
-                            Create account
+                            Crear cuenta
                         </Button>
                     )}
                 </div>
 
                 <div className="text-muted-foreground text-center text-sm">
-                    Already have an account?{' '}
+                    ¿Ya tienes una cuenta?{' '}
                     <TextLink href={route('login')}>
-                        Log in
+                        Iniciar sesión
                     </TextLink>
                 </div>
             </form>
