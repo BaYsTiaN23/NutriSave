@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\FileUploadController;
 use App\Http\Controllers\Api\LikesController;
 use App\Http\Controllers\Api\PostsController;
 use App\Http\Controllers\Api\SharesController;
+use App\Http\Controllers\Api\TipOfDayController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,9 @@ Route::middleware('auth:web')->get('/user', function (Request $request) {
 
 // Public routes (for now, you can add auth middleware later)
 Route::apiResource('posts', PostsController::class);
+
+// Tip of the day route
+Route::get('tip-of-day', [TipOfDayController::class, 'index']);
 
 // Protected routes (require authentication)
 Route::middleware('auth:web')->group(function () {
