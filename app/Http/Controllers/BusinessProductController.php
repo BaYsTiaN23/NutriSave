@@ -52,7 +52,7 @@ class BusinessProductController extends Controller
             $query->where('stock', '>', 0);
         }
 
-        $products = $query->paginate($request->get('per_page', 15));
+        $products = $query->paginate($request->get('per_page', 5));
 
         return response()->json($products);
     }
@@ -165,7 +165,7 @@ class BusinessProductController extends Controller
     {
         $products = $business->products()
             ->with('promotions')
-            ->paginate(15);
+            ->paginate(5);
 
         return response()->json($products);
     }
@@ -185,7 +185,7 @@ class BusinessProductController extends Controller
             $query->where('business_id', $request->business_id);
         }
 
-        $products = $query->paginate($request->get('per_page', 15));
+        $products = $query->paginate($request->get('per_page', 5));
 
         return response()->json($products);
     }

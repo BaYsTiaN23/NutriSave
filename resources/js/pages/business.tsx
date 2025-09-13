@@ -139,7 +139,7 @@ export default function BusinessPage() {
 
     // Pagination states
     const [currentPage, setCurrentPage] = useState(1)
-    const [productsPerPage] = useState(10)
+    const [productsPerPage] = useState(5)
     const [totalProducts, setTotalProducts] = useState(0)
 
     // Form states
@@ -177,17 +177,17 @@ export default function BusinessPage() {
             } else {
                 setPaginationLoading(true)
             }
-            
+
             // Fetch business analytics summary (using the existing business ID)
             const businessId = 3 // Updated to use the actual business ID that exists
-            
+
             if (fetchOnlyProducts) {
                 // Only fetch products for pagination
                 const productsResponse = await axios.get(`/api/b2b/businesses/${businessId}/products?page=${page}&per_page=${productsPerPage}&sort=created_at&order=asc`)
-                
+
                 // Handle paginated or nested data structure
                 const productsData = productsResponse.data?.data || productsResponse.data
-                
+
                 setImportedProducts(Array.isArray(productsData) ? productsData : [])
                 setTotalProducts(productsResponse.data?.total || productsData?.length || 0)
                 setCurrentPage(page)
@@ -208,11 +208,11 @@ export default function BusinessPage() {
                     ctr: 0,
                     conversionRate: 0,
                 })
-                
+
                 // Handle paginated or nested data structure
                 const productsData = productsResponse.data?.data || productsResponse.data
                 const promotionsData = promotionsResponse.data?.data || promotionsResponse.data
-                
+
                 setImportedProducts(Array.isArray(productsData) ? productsData : [])
                 setTotalProducts(productsResponse.data?.total || productsData?.length || 0)
                 setCurrentPage(page)
@@ -249,10 +249,10 @@ export default function BusinessPage() {
         } catch (err) {
             console.log('API not available, using mock data for development')
             console.error('Error fetching business data:', err)
-            
+
             // Load mock data when API fails (don't show error to user in this case)
             setError(null) // Clear any previous errors since we're providing fallback data
-            
+
             // Set mock products data with pagination simulation
             const mockProducts = [
                 {
@@ -310,17 +310,94 @@ export default function BusinessPage() {
                     status: "active",
                     lastUpdated: "2024-01-15",
                 },
+                {
+                    id: 6,
+                    name: "Yogurt Griego Natural",
+                    brand: "Danone",
+                    category: "Lácteos",
+                    price: 42.0,
+                    stock: 90,
+                    sku: "DAN006",
+                    status: "active",
+                    lastUpdated: "2024-01-16",
+                },
+                {
+                    id: 7,
+                    name: "Avena Instantánea",
+                    brand: "Quaker",
+                    category: "Cereales",
+                    price: 38.5,
+                    stock: 110,
+                    sku: "QUA007",
+                    status: "active",
+                    lastUpdated: "2024-01-16",
+                },
+                {
+                    id: 8,
+                    name: "Atún en Agua",
+                    brand: "Herdez",
+                    category: "Conservas",
+                    price: 25.0,
+                    stock: 200,
+                    sku: "HER008",
+                    status: "active",
+                    lastUpdated: "2024-01-16",
+                },
+                {
+                    id: 9,
+                    name: "Frijoles Negros",
+                    brand: "La Costeña",
+                    category: "Conservas",
+                    price: 18.0,
+                    stock: 150,
+                    sku: "COS009",
+                    status: "inactive",
+                    lastUpdated: "2024-01-15",
+                },
+                {
+                    id: 10,
+                    name: "Aceite de Coco",
+                    brand: "Cocosette",
+                    category: "Aceites",
+                    price: 95.0,
+                    stock: 60,
+                    sku: "COC010",
+                    status: "active",
+                    lastUpdated: "2024-01-17",
+                },
+                {
+                    id: 11,
+                    name: "Miel de Abeja Pura",
+                    brand: "Miel Carlota",
+                    category: "Endulzantes",
+                    price: 65.0,
+                    stock: 80,
+                    sku: "CAR011",
+                    status: "active",
+                    lastUpdated: "2024-01-17",
+                },
+                {
+                    id: 12,
+                    name: "Pasta Integral",
+                    brand: "Barilla",
+                    category: "Pastas",
+                    price: 32.0,
+                    stock: 120,
+                    sku: "BAR012",
+                    status: "active",
+                    lastUpdated: "2024-01-17",
+                },
             ]
-            
+
             // Simulate pagination
             const startIndex = (page - 1) * productsPerPage
             const endIndex = startIndex + productsPerPage
             const paginatedProducts = mockProducts.slice(startIndex, endIndex)
-            
+
             setImportedProducts(paginatedProducts)
             setTotalProducts(mockProducts.length)
             setCurrentPage(page)
-            
+
             if (!fetchOnlyProducts) {
                 setBusinessStats({
                     totalViews: 12847,
@@ -330,7 +407,7 @@ export default function BusinessPage() {
                     ctr: 16.8,
                     conversionRate: 15.0,
                 })
-                
+
                 // Set mock promotions data
                 setPromotedProducts([
                     {
@@ -437,7 +514,7 @@ export default function BusinessPage() {
                 end_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
                 status: 'active'
             }
-            
+
             await createPromotion(promotionData)
             setIsNewPromotionOpen(false)
             setPromotionForm({ productName: '', discount: '', budget: '', description: '' })
@@ -462,17 +539,17 @@ export default function BusinessPage() {
                 sku: productForm.sku,
                 description: productForm.description
             }
-            
+
             await createProduct(productData)
             setIsNewProductOpen(false)
-            setProductForm({ 
-                name: '', 
-                brand: '', 
-                category: '', 
-                price: '', 
-                stock: '', 
-                sku: '', 
-                description: '' 
+            setProductForm({
+                name: '',
+                brand: '',
+                category: '',
+                price: '',
+                stock: '',
+                sku: '',
+                description: ''
             })
         } catch (err) {
             console.error('Error creating product:', err)
@@ -596,34 +673,34 @@ export default function BusinessPage() {
                                     <div className="grid gap-4 py-4">
                                         <div className="grid gap-2">
                                             <Label htmlFor="product-name" className="text-gray-800">Producto</Label>
-                                            <Input 
-                                                id="product-name" 
-                                                placeholder="Nombre del producto" 
+                                            <Input
+                                                id="product-name"
+                                                placeholder="Nombre del producto"
                                                 className="border-red-300 focus:border-red-500"
                                                 value={promotionForm.productName}
-                                                onChange={(e) => setPromotionForm({...promotionForm, productName: e.target.value})}
+                                                onChange={(e) => setPromotionForm({ ...promotionForm, productName: e.target.value })}
                                             />
                                         </div>
                                         <div className="grid gap-2">
                                             <Label htmlFor="discount" className="text-gray-800">Descuento (%)</Label>
-                                            <Input 
-                                                id="discount" 
-                                                type="number" 
-                                                placeholder="15" 
+                                            <Input
+                                                id="discount"
+                                                type="number"
+                                                placeholder="15"
                                                 className="border-red-300 focus:border-red-500"
                                                 value={promotionForm.discount}
-                                                onChange={(e) => setPromotionForm({...promotionForm, discount: e.target.value})}
+                                                onChange={(e) => setPromotionForm({ ...promotionForm, discount: e.target.value })}
                                             />
                                         </div>
                                         <div className="grid gap-2">
                                             <Label htmlFor="budget" className="text-gray-800">Presupuesto Diario</Label>
-                                            <Input 
-                                                id="budget" 
-                                                type="number" 
-                                                placeholder="500" 
+                                            <Input
+                                                id="budget"
+                                                type="number"
+                                                placeholder="500"
                                                 className="border-red-300 focus:border-red-500"
                                                 value={promotionForm.budget}
-                                                onChange={(e) => setPromotionForm({...promotionForm, budget: e.target.value})}
+                                                onChange={(e) => setPromotionForm({ ...promotionForm, budget: e.target.value })}
                                             />
                                         </div>
                                         <div className="grid gap-2">
@@ -633,7 +710,7 @@ export default function BusinessPage() {
                                                 placeholder="Describe los beneficios de tu promoción..."
                                                 className="min-h-20 border-red-300 focus:border-red-500"
                                                 value={promotionForm.description}
-                                                onChange={(e) => setPromotionForm({...promotionForm, description: e.target.value})}
+                                                onChange={(e) => setPromotionForm({ ...promotionForm, description: e.target.value })}
                                             />
                                         </div>
                                     </div>
@@ -641,8 +718,8 @@ export default function BusinessPage() {
                                         <Button variant="outline" onClick={() => setIsNewPromotionOpen(false)} className="border-red-300 text-red-700 hover:bg-red-50">
                                             Cancelar
                                         </Button>
-                                        <Button 
-                                            onClick={handlePromotionSubmit} 
+                                        <Button
+                                            onClick={handlePromotionSubmit}
                                             disabled={isCreatingPromotion}
                                             className="bg-red-500 hover:bg-orange-500 text-white"
                                         >
@@ -848,29 +925,29 @@ export default function BusinessPage() {
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div className="grid gap-2">
                                                             <Label htmlFor="product-name" className="text-gray-800">Nombre del Producto</Label>
-                                                            <Input 
-                                                                id="product-name" 
-                                                                placeholder="Ej: Aceite de Oliva Extra Virgen" 
+                                                            <Input
+                                                                id="product-name"
+                                                                placeholder="Ej: Aceite de Oliva Extra Virgen"
                                                                 className="border-red-300 focus:border-red-500"
                                                                 value={productForm.name}
-                                                                onChange={(e) => setProductForm({...productForm, name: e.target.value})}
+                                                                onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
                                                             />
                                                         </div>
                                                         <div className="grid gap-2">
                                                             <Label htmlFor="product-brand" className="text-gray-800">Marca</Label>
-                                                            <Input 
-                                                                id="product-brand" 
-                                                                placeholder="Ej: Capullo" 
+                                                            <Input
+                                                                id="product-brand"
+                                                                placeholder="Ej: Capullo"
                                                                 className="border-red-300 focus:border-red-500"
                                                                 value={productForm.brand}
-                                                                onChange={(e) => setProductForm({...productForm, brand: e.target.value})}
+                                                                onChange={(e) => setProductForm({ ...productForm, brand: e.target.value })}
                                                             />
                                                         </div>
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div className="grid gap-2">
                                                             <Label htmlFor="product-category" className="text-gray-800">Categoría</Label>
-                                                            <Select value={productForm.category} onValueChange={(value) => setProductForm({...productForm, category: value})}>
+                                                            <Select value={productForm.category} onValueChange={(value) => setProductForm({ ...productForm, category: value })}>
                                                                 <SelectTrigger className="border-red-300 focus:border-red-500">
                                                                     <SelectValue placeholder="Selecciona una categoría" />
                                                                 </SelectTrigger>
@@ -890,37 +967,37 @@ export default function BusinessPage() {
                                                         </div>
                                                         <div className="grid gap-2">
                                                             <Label htmlFor="product-sku" className="text-gray-800">SKU</Label>
-                                                            <Input 
-                                                                id="product-sku" 
-                                                                placeholder="Ej: CAP001" 
+                                                            <Input
+                                                                id="product-sku"
+                                                                placeholder="Ej: CAP001"
                                                                 className="border-red-300 focus:border-red-500"
                                                                 value={productForm.sku}
-                                                                onChange={(e) => setProductForm({...productForm, sku: e.target.value})}
+                                                                onChange={(e) => setProductForm({ ...productForm, sku: e.target.value })}
                                                             />
                                                         </div>
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-4">
                                                         <div className="grid gap-2">
                                                             <Label htmlFor="product-price" className="text-gray-800">Precio ($)</Label>
-                                                            <Input 
-                                                                id="product-price" 
-                                                                type="number" 
+                                                            <Input
+                                                                id="product-price"
+                                                                type="number"
                                                                 step="0.01"
-                                                                placeholder="0.00" 
+                                                                placeholder="0.00"
                                                                 className="border-red-300 focus:border-red-500"
                                                                 value={productForm.price}
-                                                                onChange={(e) => setProductForm({...productForm, price: e.target.value})}
+                                                                onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
                                                             />
                                                         </div>
                                                         <div className="grid gap-2">
                                                             <Label htmlFor="product-stock" className="text-gray-800">Stock Inicial</Label>
-                                                            <Input 
-                                                                id="product-stock" 
-                                                                type="number" 
-                                                                placeholder="0" 
+                                                            <Input
+                                                                id="product-stock"
+                                                                type="number"
+                                                                placeholder="0"
                                                                 className="border-red-300 focus:border-red-500"
                                                                 value={productForm.stock}
-                                                                onChange={(e) => setProductForm({...productForm, stock: e.target.value})}
+                                                                onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
                                                             />
                                                         </div>
                                                     </div>
@@ -931,7 +1008,7 @@ export default function BusinessPage() {
                                                             placeholder="Describe las características del producto..."
                                                             className="min-h-20 border-red-300 focus:border-red-500"
                                                             value={productForm.description}
-                                                            onChange={(e) => setProductForm({...productForm, description: e.target.value})}
+                                                            onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
                                                         />
                                                     </div>
                                                 </div>
@@ -939,8 +1016,8 @@ export default function BusinessPage() {
                                                     <Button variant="outline" onClick={() => setIsNewProductOpen(false)} className="border-red-300 text-red-700 hover:bg-red-50">
                                                         Cancelar
                                                     </Button>
-                                                    <Button 
-                                                        onClick={handleProductSubmit} 
+                                                    <Button
+                                                        onClick={handleProductSubmit}
                                                         disabled={isCreatingProduct || !productForm.name || !productForm.brand || !productForm.category || !productForm.price}
                                                         className="bg-red-500 hover:bg-orange-500 text-white"
                                                     >
@@ -1036,7 +1113,7 @@ export default function BusinessPage() {
                                                     <>
                                                         <p className="text-gray-600 mb-2">No hay productos en esta página</p>
                                                         <p className="text-sm text-gray-500">Intenta ir a una página anterior o verifica los filtros aplicados.</p>
-                                                        <Button 
+                                                        <Button
                                                             onClick={() => handlePageChange(1)}
                                                             className="mt-4 bg-red-500 hover:bg-red-600 text-white"
                                                         >
@@ -1076,7 +1153,7 @@ export default function BusinessPage() {
                                                     <ChevronLeft className="w-4 h-4" />
                                                     Anterior
                                                 </Button>
-                                                
+
                                                 {/* Page Numbers */}
                                                 <div className="flex items-center gap-1 mx-2">
                                                     {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
@@ -1110,7 +1187,7 @@ export default function BusinessPage() {
                                                         return null
                                                     })}
                                                 </div>
-                                                
+
                                                 <Button
                                                     variant="outline"
                                                     size="sm"

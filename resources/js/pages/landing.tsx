@@ -68,7 +68,7 @@ const featuredProducts = [
         price: 45.99,
         originalPrice: 65.99,
         discount: 30,
-        image: "/placeholder.svg",
+        image: "/images/pechuga-pollo-empaque.jpg",
         sponsored: false
     },
     {
@@ -80,7 +80,7 @@ const featuredProducts = [
         price: 12.50,
         originalPrice: 18.00,
         discount: 31,
-        image: "/placeholder.svg",
+        image: "/images/arroz-blanco-empaque.jpg",
         sponsored: true
     },
     {
@@ -92,7 +92,7 @@ const featuredProducts = [
         price: 22.99,
         originalPrice: 28.99,
         discount: 21,
-        image: "/placeholder.svg",
+        image: "/images/leche-lala-carton.jpg",
         sponsored: false
     },
     {
@@ -104,7 +104,7 @@ const featuredProducts = [
         price: 89.99,
         originalPrice: 120.00,
         discount: 25,
-        image: "/placeholder.svg",
+        image: "/images/aceite-oliva-botella.jpg",
         sponsored: true
     }
 ];
@@ -261,31 +261,25 @@ export default function Landing() {
                 </header>
 
                 {/* Hero Section */}
-                <section className="py-20 px-6">
+                <section className="py-20 px-4">
                     <div className="container mx-auto text-center max-w-4xl">
-                        <h1 className="text-4xl md:text-5xl font-bold text-[#8B4513] mb-6">
+                        <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                             Tu Coach de Nutrición IA para Planificación de Comidas Personalizada.
                         </h1>
-                        <p className="text-lg text-[#8B4513] mb-8 max-w-3xl mx-auto">
-                            NutriSave utiliza IA avanzada para crear planes de comidas personalizados que se adaptan a tus objetivos de salud, necesidades dietéticas y presupuesto. Come más inteligente, saludable y económico.
+
+                        <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                            NutriSave utiliza IA avanzada para crear planes de comidas personalizados que se
+                            adaptan a tus objetivos de salud, necesidades dietéticas y presupuesto. Come más
+                            inteligente, saludable y económico.
                         </p>
+
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href={route('register')}>
-                                <Button
-                                    size="lg"
-                                    className="bg-[#8B4513] hover:bg-[#A0522D] text-white px-8 py-3 text-lg"
-                                >
-                                    Comenzar Gratis
-                                </Button>
-                            </Link>
-                            <Link href={route('feed')}>
-                                <Button
-                                    size="lg"
-                                    className="bg-[#8B4513] hover:bg-[#A0522D] text-white px-8 py-3 text-lg"
-                                >
-                                    Comunidad
-                                </Button>
-                            </Link>
+                            <Button size="lg" className="shadow-warm hover:shadow-glow transition-all bg-[#DA5B20] text-white">
+                                Comenzar Gratis
+                            </Button>
+                            <Button size="lg" variant="outline" className="border-primary/20 hover:bg-primary/5">
+                                Comunidad
+                            </Button>
                         </div>
                     </div>
                 </section>
@@ -354,74 +348,50 @@ export default function Landing() {
                 <FeaturesSection />
 
                 {/* Featured Products */}
-                <section className="py-16 px-4 bg-[#faf9f7]">
+                <section className="py-20 px-4 bg-white/30 backdrop-blur-sm">
                     <div className="container mx-auto">
-                        <div className="text-center mb-12">
-                            <h3 className="text-3xl font-bold text-balance mb-4 text-[#8B4513]">Ofertas Destacadas</h3>
-                            <p className="text-lg text-[#8B4513]/70 text-pretty max-w-2xl mx-auto">
+                        <div className="text-center mb-16">
+                            <h2 className="text-4xl font-bold text-primary mb-4">Ofertas Destacadas</h2>
+                            <p className="text-lg text-muted-foreground">
                                 Productos seleccionados con los mejores precios y descuentos exclusivos
                             </p>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-                            {featuredProducts.map((product) => (
-                                <Card key={product.id} className="group hover:shadow-lg transition-shadow bg-white border-[#8B4513]/20">
-                                    <CardContent className="p-4">
-                                        <div className="relative mb-4">
-                                            <img
-                                                src={product.image || "/placeholder.svg"}
-                                                alt={product.name}
-                                                className="w-full h-32 object-cover rounded-lg bg-[#EFDBCD]"
-                                            />
-                                            {product.sponsored && (
-                                                <Badge className="absolute top-2 right-2 bg-[#8B4513] text-white text-xs">
-                                                    Patrocinado
-                                                </Badge>
-                                            )}
-                                            {product.discount > 0 && (
-                                                <Badge className="absolute top-2 left-2 bg-red-500 text-white text-xs">
-                                                    -{product.discount}%
-                                                </Badge>
-                                            )}
+                        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            {featuredProducts.map((product, index) => (
+                                <div
+                                    key={index}
+                                    className="bg-white/60 backdrop-blur-sm rounded-2xl border border-white/20 overflow-hidden hover:shadow-glow transition-all group"
+                                >
+                                    <div className="bg-gradient-to-br from-muted/20 to-muted/40 h-48 flex items-center justify-center relative">
+                                        <img src={product.image} alt={product.name} className="w-full h-full object-cover object-center" />
+                                        <div className="absolute top-4 left-4 bg-destructive text-white px-2 py-1 rounded-lg text-sm font-medium">
+                                            -{product.discount}
+                                        </div>
+                                    </div>
+
+                                    <div className="p-6">
+                                        <div className="text-sm text-muted-foreground mb-2">{product.category}</div>
+                                        <h3 className="font-semibold text-foreground mb-3">{product.name}</h3>
+
+                                        <div className="flex items-center space-x-2 mb-4">
+                                            <span className="text-2xl font-bold text-[#DA5B20]">{product.price}</span>
+                                            <span className="text-sm text-muted-foreground line-through">{product.originalPrice}</span>
                                         </div>
 
-                                        <div className="space-y-2">
-                                            <div className="flex items-center justify-between">
-                                                <Badge variant="outline" className="text-xs border-[#8B4513]/20 text-[#8B4513]">
-                                                    {product.brand}
-                                                </Badge>
-                                                <Badge variant="secondary" className="text-xs bg-[#EFDBCD] text-[#8B4513]">
-                                                    {product.store}
-                                                </Badge>
-                                            </div>
-
-                                            <h4 className="font-semibold text-sm line-clamp-2 text-[#8B4513]">{product.name}</h4>
-
-                                            <div className="flex items-center justify-between">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-lg font-bold text-[#8B4513]">${product.price}</span>
-                                                    {product.originalPrice > product.price && (
-                                                        <span className="text-sm text-[#8B4513]/60 line-through">${product.originalPrice}</span>
-                                                    )}
-                                                </div>
-                                                <Badge variant="outline" className="text-xs border-[#8B4513]/20 text-[#8B4513]">
-                                                    {product.category}
-                                                </Badge>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
+                                        <Button className="w-full bg-[#DA5B20] hover:shadow-warm transition-all">
+                                            Agregar
+                                        </Button>
+                                    </div>
+                                </div>
                             ))}
                         </div>
 
-                        <div className="text-center mt-8">
-                            <p className="text-[#8B4513]/70 mb-4">Regístrate para acceder a todas las ofertas y funcionalidades</p>
-                            <Link href="/register">
-                                <Button size="lg" className="bg-[#8B4513] hover:bg-[#A0522D] text-white">
-                                    Ver Todas las Ofertas
-                                    <ArrowRight className="ml-2 w-4 h-4" />
-                                </Button>
-                            </Link>
+                        <div className="text-center mt-12">
+                            <p className="text-muted-foreground mb-6">Regístrate para acceder a todas las ofertas y funcionalidades</p>
+                            <Button size="lg" className="bg-[#DA5B20] shadow-warm hover:shadow-glow transition-all">
+                                Ver Todas las Ofertas
+                            </Button>
                         </div>
                     </div>
                 </section>

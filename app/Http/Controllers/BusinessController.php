@@ -175,7 +175,7 @@ class BusinessController extends Controller
         }
 
         // Handle pagination
-        $perPage = $request->get('per_page', 15);
+        $perPage = $request->get('per_page', 5);
         $perPage = min($perPage, 100); // Limit max results per page
         
         $products = $query->paginate($perPage);
@@ -190,7 +190,7 @@ class BusinessController extends Controller
     {
         $promotions = $business->promotions()
             ->with(['product', 'stats'])
-            ->paginate(15);
+            ->paginate(5);
 
         return response()->json($promotions);
     }

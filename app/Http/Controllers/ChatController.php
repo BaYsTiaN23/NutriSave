@@ -18,16 +18,8 @@ class ChatController extends Controller
 
     public function index()
     {
-        // For authenticated users, automatically create a new chat and redirect
-        if (Auth::check()) {
-            $chat = Auth::user()->chats()->create([
-                'title' => 'Untitled',
-            ]);
-
-            return redirect()->route('chat.show', $chat);
-        }
-
-        // For unauthenticated users, show the blank chat page
+        // Show the blank chat page for both authenticated and unauthenticated users
+        // Users will need to click a button to create a new chat
         return Inertia::render('chat', [
             'chat' => null,
         ]);
