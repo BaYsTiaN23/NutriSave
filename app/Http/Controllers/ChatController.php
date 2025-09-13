@@ -150,7 +150,9 @@ class ChatController extends Controller
                 // Mock response for testing or when API key is not set
                 $fullResponse = 'This is a test response.';
                 echo $fullResponse;
-                ob_flush();
+                if (ob_get_level()) {
+                    ob_flush();
+                }
                 flush();
             } else {
                 try {
@@ -164,14 +166,18 @@ class ChatController extends Controller
                         if ($chunk !== null) {
                             $fullResponse .= $chunk;
                             echo $chunk;
-                            ob_flush();
+                            if (ob_get_level()) {
+                                ob_flush();
+                            }
                             flush();
                         }
                     }
                 } catch (\Exception $e) {
                     $fullResponse = 'Error: Unable to generate response.';
                     echo $fullResponse;
-                    ob_flush();
+                    if (ob_get_level()) {
+                        ob_flush();
+                    }
                     flush();
                 }
             }
