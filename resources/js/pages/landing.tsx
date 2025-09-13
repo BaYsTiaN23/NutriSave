@@ -263,7 +263,7 @@ export default function Landing() {
                 {/* Hero Section */}
                 <section className="py-20 px-4">
                     <div className="container mx-auto text-center max-w-4xl">
-                        <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                        <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-primary-gradient bg-clip-text text-transparent bg-[#DA5B20]">
                             Tu Coach de Nutrición IA para Planificación de Comidas Personalizada.
                         </h1>
 
@@ -322,23 +322,21 @@ export default function Landing() {
                 <section className="py-16 px-6 bg-[#faf9f7]">
                     <div className="container mx-auto text-center max-w-4xl">
                         <h2 className="text-2xl font-semibold text-[#8B4513] mb-8">
-                            Our Brand Is Featured On
+                            Nuestras Marcas Destacadas
                         </h2>
                         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12">
                             <div className="flex items-center space-x-2">
                                 <div className="w-8 h-8 bg-[#8B4513] rounded flex items-center justify-center">
-                                    <span className="text-white font-bold text-sm">a</span>
+                                    <span className="text-white font-bold text-sm">S</span>
                                 </div>
-                                <span className="text-black font-medium">Abstract</span>
+                                <span className="text-[#8B4513] font-bold">Soriana</span>
                             </div>
-                            <div className="text-[#8B4513] font-medium">CoLab</div>
-                            <div className="text-[#8B4513] font-medium">Accel</div>
-                            <div className="text-[#8B4513] font-medium">deel.</div>
+                            <div className="text-[#8B4513] font-bold">Walmart</div>
+                            <div className="text-[#8B4513] font-bold">Chedraui</div>
+                            <div className="text-[#8B4513] font-bold">Danone</div>
                             <div className="flex items-center space-x-2">
-                                <span className="text-black font-medium">amazon</span>
-                                <div className="w-6 h-3 bg-orange-500 rounded-sm flex items-center justify-center">
-                                    <span className="text-white text-xs">→</span>
-                                </div>
+                                <span className="text-[#8B4513] font-bold">Calimax</span>
+
                             </div>
                         </div>
                     </div>

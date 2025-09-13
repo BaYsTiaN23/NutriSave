@@ -14,6 +14,9 @@ import { Head, router, usePage } from '@inertiajs/react';
 import { useStream } from '@laravel/stream-react';
 import { Info, Bot, User, ArrowLeft, Send, Sparkles, ShoppingCart, Clock, DollarSign, ChevronDown, ChevronUp } from 'lucide-react';
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { UserMenuContent } from '@/components/user-menu-content';
+import { useInitials } from '@/hooks/use-initials';
 
 type Message = {
     id?: number;
@@ -40,6 +43,10 @@ type PageProps = {
             id: number;
             name: string;
             email: string;
+            avatar?: string;
+            email_verified_at: string | null;
+            created_at: string;
+            updated_at: string;
         };
     };
     chat?: ChatType;
@@ -49,6 +56,7 @@ type PageProps = {
 };
 
 function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; auth: PageProps['auth']; flash: PageProps['flash'] }) {
+    const getInitials = useInitials();
     const [messages, setMessages] = useState<Message[]>(chat?.messages || []);
     const [currentTitle, setCurrentTitle] = useState<string>(chat?.title || 'Untitled');
     const [shouldGenerateTitle, setShouldGenerateTitle] = useState<boolean>(false);
@@ -418,6 +426,36 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                                 En línea
                                             </Badge>
                                         </div>
+                                    </div>
+
+                                    {/* User Menu */}
+                                    <div className="flex items-center gap-3">
+                                        {auth?.user ? (
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" className="size-10 rounded-full p-1 hover:bg-primary/10">
+                                                        <Avatar className="size-8 overflow-hidden rounded-full">
+                                                            <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                                                            <AvatarFallback className="rounded-lg bg-primary text-primary-foreground">
+                                                                {getInitials(auth.user.name)}
+                                                            </AvatarFallback>
+                                                        </Avatar>
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent className="w-56 bg-gray-50 border-primary/20 shadow-xl backdrop-blur-sm" align="end">
+                                                    <UserMenuContent user={auth.user} />
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                <Button variant="outline" size="sm" onClick={() => router.visit('/login')}>
+                                                    Iniciar Sesión
+                                                </Button>
+                                                <Button size="sm" onClick={() => router.visit('/register')}>
+                                                    Registrarse
+                                                </Button>
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
