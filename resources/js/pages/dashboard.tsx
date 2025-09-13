@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
     Utensils,
     ShoppingCart,
@@ -15,8 +16,70 @@ import {
     Package,
     Bell,
     Settings,
+    X,
+    CheckCircle,
+    AlertCircle,
+    Info,
 } from "lucide-react"
 import { Link } from "@inertiajs/react"
+import { useState } from "react"
+
+// Datos estáticos para notificaciones
+const staticNotifications = [
+    {
+        id: 1,
+        type: "success",
+        title: "¡Bienvenido a NutriSave!",
+        message: "Tu cuenta ha sido creada exitosamente. Comienza explorando las funcionalidades.",
+        time: "Hace 2 horas",
+        read: false,
+    },
+    {
+        id: 2,
+        type: "info",
+        title: "Nueva receta disponible",
+        message: "Se ha agregado una nueva receta de ensalada mediterránea a tu feed.",
+        time: "Hace 5 horas",
+        read: false,
+    },
+    {
+        id: 3,
+        type: "warning",
+        title: "Producto próximo a vencer",
+        message: "Tu leche vence en 2 días. Considera usarla en una receta.",
+        time: "Ayer",
+        read: true,
+    },
+    {
+        id: 4,
+        type: "success",
+        title: "Ahorro registrado",
+        message: "Has ahorrado $15.50 esta semana comparado con la semana pasada.",
+        time: "Hace 3 días",
+        read: true,
+    },
+];
+
+// Datos estáticos para configuración
+const staticSettings = {
+    profile: {
+        name: "Usuario Demo",
+        email: "usuario@nutrisave.com",
+        avatar: "/user-avatar.jpg",
+    },
+    preferences: {
+        notifications: true,
+        emailUpdates: true,
+        darkMode: false,
+        language: "Español",
+    },
+    stats: {
+        postsCreated: 12,
+        moneySaved: 156.75,
+        recipesShared: 8,
+        daysActive: 45,
+    },
+};
 
 const featureCards = [
     {
@@ -131,6 +194,33 @@ const featuredProducts = [
 ]
 
 export default function DashboardPage() {
+    const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [notifications, setNotifications] = useState(staticNotifications);
+
+    const getNotificationIcon = (type: string) => {
+        switch (type) {
+            case "success":
+                return <CheckCircle className="w-5 h-5 text-green-600" />;
+            case "warning":
+                return <AlertCircle className="w-5 h-5 text-yellow-600" />;
+            case "info":
+                return <Info className="w-5 h-5 text-blue-600" />;
+            default:
+                return <Bell className="w-5 h-5 text-[#8B4513]" />;
+        }
+    };
+
+    const markAsRead = (id: number) => {
+        setNotifications(prev =>
+            prev.map(notif =>
+                notif.id === id ? { ...notif, read: true } : notif
+            )
+        );
+    };
+
+    const unreadCount = notifications.filter(n => !n.read).length;
+
     return (
         <div className="min-h-screen bg-[#faf9f7]">
             {/* Header */}
@@ -142,16 +232,30 @@ export default function DashboardPage() {
                                 <Utensils className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-xl font-bold text-[#8B4513] text-balance">NutriSave</h1>
+                                <Link href="/">
+                                    <h1 className="text-xl font-bold text-[#8B4513] text-balance">NutriSave</h1>
+                                </Link>
+
                             </div>
                         </div>
                         <div className="flex items-center gap-3">
-                            <Button variant="ghost" size="sm" className="text-[#8B4513] hover:bg-[#8B4513]/10">
-                                <Bell className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="sm" className="text-[#8B4513] hover:bg-[#8B4513]/10">
-                                <Settings className="w-4 h-4" />
-                            </Button>
+                            <div
+                                className="relative flex items-center justify-center w-10 h-10 bg-[#EFDBCD] hover:bg-[#8B4513]/10 rounded-lg transition-colors cursor-pointer"
+                                onClick={() => setIsNotificationsOpen(true)}
+                            >
+                                <Bell className="w-4 h-4 text-[#8B4513]" />
+                                {unreadCount > 0 && (
+                                    <Badge className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center p-0">
+                                        {unreadCount}
+                                    </Badge>
+                                )}
+                            </div>
+                            <div
+                                className="flex items-center justify-center w-10 h-10 bg-[#EFDBCD] hover:bg-[#8B4513]/10 rounded-lg transition-colors cursor-pointer"
+                                onClick={() => setIsSettingsOpen(true)}
+                            >
+                                <Settings className="w-4 h-4 text-[#8B4513]" />
+                            </div>
                             <Badge variant="secondary" className="hidden sm:flex bg-[#EFDBCD] text-[#8B4513] border-[#8B4513]/20">
                                 Actualizado hoy
                             </Badge>
@@ -272,6 +376,160 @@ export default function DashboardPage() {
                     </div>
                 </div>
             </section>
+
+            {/* Modal de Notificaciones */}
+            <Dialog open={isNotificationsOpen} onOpenChange={setIsNotificationsOpen}>
+                <DialogContent className="max-w-2xl w-[95vw] max-h-[80vh] overflow-y-auto bg-[#faf9f7] border-[#8B4513]/20">
+                    <DialogHeader className="border-b border-[#8B4513]/20 pb-4 relative">
+                        <DialogTitle className="text-[#8B4513] text-2xl font-bold pr-8">
+                            Notificaciones
+                        </DialogTitle>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setIsNotificationsOpen(false)}
+                            className="absolute top-0 right-0 text-[#8B4513] hover:text-[#A0522D] hover:bg-[#8B4513]/10"
+                        >
+                            <X className="w-5 h-5" />
+                        </Button>
+                    </DialogHeader>
+
+                    <div className="space-y-4 p-2">
+                        {notifications.map((notification) => (
+                            <Card
+                                key={notification.id}
+                                className={`cursor-pointer transition-all duration-200 hover:shadow-md ${notification.read
+                                    ? 'bg-white border-[#8B4513]/10'
+                                    : 'bg-[#EFDBCD]/30 border-[#8B4513]/30'
+                                    }`}
+                                onClick={() => markAsRead(notification.id)}
+                            >
+                                <CardContent className="p-4">
+                                    <div className="flex items-start gap-3">
+                                        {getNotificationIcon(notification.type)}
+                                        <div className="flex-1">
+                                            <div className="flex items-center justify-between">
+                                                <h4 className={`font-semibold ${notification.read ? 'text-[#8B4513]/70' : 'text-[#8B4513]'}`}>
+                                                    {notification.title}
+                                                </h4>
+                                                <span className="text-xs text-[#8B4513]/60">{notification.time}</span>
+                                            </div>
+                                            <p className={`text-sm mt-1 ${notification.read ? 'text-[#8B4513]/60' : 'text-[#8B4513]/80'}`}>
+                                                {notification.message}
+                                            </p>
+                                        </div>
+                                        {!notification.read && (
+                                            <div className="w-2 h-2 bg-[#8B4513] rounded-full flex-shrink-0 mt-2"></div>
+                                        )}
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        ))}
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Modal de Configuración */}
+            <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+                <DialogContent className="max-w-2xl w-[95vw] max-h-[80vh] overflow-y-auto bg-[#faf9f7] border-[#8B4513]/20">
+                    <DialogHeader className="border-b border-[#8B4513]/20 pb-4 relative">
+                        <DialogTitle className="text-[#8B4513] text-2xl font-bold pr-8">
+                            Configuración
+                        </DialogTitle>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setIsSettingsOpen(false)}
+                            className="absolute top-0 right-0 text-[#8B4513] hover:text-[#A0522D] hover:bg-[#8B4513]/10"
+                        >
+                            <X className="w-5 h-5" />
+                        </Button>
+                    </DialogHeader>
+
+                    <div className="space-y-6 p-2">
+                        {/* Perfil */}
+                        <Card className="bg-white border-[#8B4513]/20">
+                            <CardHeader>
+                                <CardTitle className="text-[#8B4513]">Perfil</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex items-center gap-4">
+                                    <Avatar className="w-16 h-16">
+                                        <AvatarImage src={staticSettings.profile.avatar} alt={staticSettings.profile.name} />
+                                        <AvatarFallback className="bg-[#8B4513] text-white text-lg">
+                                            {staticSettings.profile.name.charAt(0)}
+                                        </AvatarFallback>
+                                    </Avatar>
+                                    <div>
+                                        <h3 className="text-lg font-semibold text-[#8B4513]">{staticSettings.profile.name}</h3>
+                                        <p className="text-[#8B4513]/70">{staticSettings.profile.email}</p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Estadísticas */}
+                        <Card className="bg-white border-[#8B4513]/20">
+                            <CardHeader>
+                                <CardTitle className="text-[#8B4513]">Estadísticas</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="text-center p-4 bg-[#EFDBCD]/30 rounded-lg">
+                                        <div className="text-2xl font-bold text-[#8B4513]">{staticSettings.stats.postsCreated}</div>
+                                        <div className="text-sm text-[#8B4513]/70">Posts Creados</div>
+                                    </div>
+                                    <div className="text-center p-4 bg-[#EFDBCD]/30 rounded-lg">
+                                        <div className="text-2xl font-bold text-[#8B4513]">${staticSettings.stats.moneySaved}</div>
+                                        <div className="text-sm text-[#8B4513]/70">Dinero Ahorrado</div>
+                                    </div>
+                                    <div className="text-center p-4 bg-[#EFDBCD]/30 rounded-lg">
+                                        <div className="text-2xl font-bold text-[#8B4513]">{staticSettings.stats.recipesShared}</div>
+                                        <div className="text-sm text-[#8B4513]/70">Recetas Compartidas</div>
+                                    </div>
+                                    <div className="text-center p-4 bg-[#EFDBCD]/30 rounded-lg">
+                                        <div className="text-2xl font-bold text-[#8B4513]">{staticSettings.stats.daysActive}</div>
+                                        <div className="text-sm text-[#8B4513]/70">Días Activo</div>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+
+                        {/* Preferencias */}
+                        <Card className="bg-white border-[#8B4513]/20">
+                            <CardHeader>
+                                <CardTitle className="text-[#8B4513]">Preferencias</CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[#8B4513]">Notificaciones</span>
+                                    <Badge className={staticSettings.preferences.notifications ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                                        {staticSettings.preferences.notifications ? 'Activadas' : 'Desactivadas'}
+                                    </Badge>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[#8B4513]">Actualizaciones por Email</span>
+                                    <Badge className={staticSettings.preferences.emailUpdates ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                                        {staticSettings.preferences.emailUpdates ? 'Activadas' : 'Desactivadas'}
+                                    </Badge>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[#8B4513]">Modo Oscuro</span>
+                                    <Badge className={staticSettings.preferences.darkMode ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}>
+                                        {staticSettings.preferences.darkMode ? 'Activado' : 'Desactivado'}
+                                    </Badge>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-[#8B4513]">Idioma</span>
+                                    <Badge className="bg-[#EFDBCD] text-[#8B4513]">
+                                        {staticSettings.preferences.language}
+                                    </Badge>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

@@ -3,7 +3,7 @@ import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { type User } from '@/types';
 import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings, User as UserIcon, Bell, HelpCircle } from 'lucide-react';
 
 interface UserMenuContentProps {
     user: User;
@@ -27,17 +27,35 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
-                    <Link className="block w-full" href={route('profile.edit')} as="button" prefetch onClick={cleanup}>
-                        <Settings className="mr-2" />
-                        Settings
+                    <Link className="block w-full text-[#8B4513] hover:bg-[#EFDBCD] hover:text-[#8B4513] transition-colors duration-200 rounded-md" href="/profile" as="button" prefetch onClick={cleanup}>
+                        <UserIcon className="mr-2 h-4 w-4" />
+                        Mi Perfil
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link className="block w-full text-[#8B4513] hover:bg-[#EFDBCD] hover:text-[#8B4513] transition-colors duration-200 rounded-md" href="/settings" as="button" prefetch onClick={cleanup}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        Configuración
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link className="block w-full text-[#8B4513] hover:bg-[#EFDBCD] hover:text-[#8B4513] transition-colors duration-200 rounded-md" href="/notifications" as="button" prefetch onClick={cleanup}>
+                        <Bell className="mr-2 h-4 w-4" />
+                        Notificaciones
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link className="block w-full text-[#8B4513] hover:bg-[#EFDBCD] hover:text-[#8B4513] transition-colors duration-200 rounded-md" href="/help" as="button" prefetch onClick={cleanup}>
+                        <HelpCircle className="mr-2 h-4 w-4" />
+                        Ayuda
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-                <Link className="block w-full" method="post" href={route('logout')} as="button" onClick={handleLogout}>
-                    <LogOut className="mr-2" />
-                    Log out
+                <Link className="block w-full text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors duration-200 rounded-md" method="post" href="/logout" as="button" onClick={handleLogout}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Cerrar Sesión
                 </Link>
             </DropdownMenuItem>
         </>

@@ -1,7 +1,11 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { UserMenuContent } from '@/components/user-menu-content';
+import { useInitials } from '@/hooks/use-initials';
 import {
     Bot,
     Users,
@@ -158,10 +162,7 @@ const FeaturesSection = () => {
                                 <p className="text-sm text-gray-600 mb-4">
                                     {feature.description}
                                 </p>
-                                <div className="flex items-center text-[#8B4513] font-medium text-sm group-hover:gap-2 transition-all">
-                                    Explorar función
-                                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                                </div>
+
                             </div>
                         </div>
                     ))}
@@ -172,6 +173,10 @@ const FeaturesSection = () => {
 };
 
 export default function Landing() {
+    const page = usePage();
+    const { auth } = page.props as any;
+    const getInitials = useInitials();
+
     return (
         <>
             <Head title="NutriSave - Tu Coach de Nutrición IA" />
@@ -200,19 +205,57 @@ export default function Landing() {
                             </Link>
                         </nav>
                         <div className="flex items-center space-x-4">
-                            <Link href={route('login')}>
-                                <Button
-                                    variant="outline"
-                                    className="border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513] hover:text-white bg-[#f5f5dc]"
-                                >
-                                    Iniciar Sesión
-                                </Button>
-                            </Link>
-                            <Link href={route('register')}>
-                                <Button className="bg-[#8B4513] hover:bg-[#A0522D] text-white">
-                                    Registrarse
-                                </Button>
-                            </Link>
+                            {auth.user ? (
+                                <>
+                                    <Link href="/feed">
+                                        <Button
+                                            variant="outline"
+                                            className="border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513] hover:text-white bg-[#f5f5dc]"
+                                        >
+                                            Feed
+                                        </Button>
+                                    </Link>
+                                    <Link href="/dashboard">
+                                        <Button
+                                            variant="outline"
+                                            className="border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513] hover:text-white bg-[#f5f5dc]"
+                                        >
+                                            Dashboard
+                                        </Button>
+                                    </Link>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="size-10 rounded-full p-1 hover:bg-[#8B4513]/10">
+                                                <Avatar className="size-8 overflow-hidden rounded-full">
+                                                    <AvatarImage src={auth.user.avatar} alt={auth.user.name} />
+                                                    <AvatarFallback className="rounded-lg bg-[#8B4513] text-white">
+                                                        {getInitials(auth.user.name)}
+                                                    </AvatarFallback>
+                                                </Avatar>
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="w-56 bg-[#faf9f7] border-[#8B4513]/40 shadow-xl backdrop-blur-sm" align="end">
+                                            <UserMenuContent user={auth.user} />
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </>
+                            ) : (
+                                <>
+                                    <Link href={route('login')}>
+                                        <Button
+                                            variant="outline"
+                                            className="border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513] hover:text-white bg-[#f5f5dc]"
+                                        >
+                                            Iniciar Sesión
+                                        </Button>
+                                    </Link>
+                                    <Link href={route('register')}>
+                                        <Button className="bg-[#8B4513] hover:bg-[#A0522D] text-white">
+                                            Registrarse
+                                        </Button>
+                                    </Link>
+                                </>
+                            )}
                         </div>
                     </div>
                 </header>
@@ -443,13 +486,13 @@ export default function Landing() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <Link href="/register">
+                            <Link href="/business">
                                 <Button size="lg" className="text-lg px-8 bg-[#8B4513] hover:bg-[#A0522D] text-white">
                                     Panel Empresarial
                                     <TrendingUp className="ml-2 w-5 h-5" />
                                 </Button>
                             </Link>
-                            <Button variant="outline" size="lg" className="text-lg px-8 bg-transparent border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513]/10">
+                            <Button variant="outline" onClick={() => window.location.href = 'mailto:ventas@nutrisave.com'} size="lg" className="text-lg px-8 bg-transparent border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513]/10">
                                 Contactar Ventas
                             </Button>
                         </div>

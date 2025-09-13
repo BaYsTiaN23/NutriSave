@@ -155,7 +155,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
                                         onValueChange={(value) => setData('category', value)}
                                         required
                                     >
-                                        <SelectTrigger className={`${errors.category ? 'border-red-500' : 'border-[#8B4513]/30 focus:border-[#8B4513] focus:ring-2 focus:ring-[#8B4513]/20'} text-[#8B4513] bg-white hover:bg-[#EFDBCD]/30 transition-colors`}>
+                                        <SelectTrigger className={`${errors.category ? 'border-red-500' : 'border-[#8B4513]/30 focus:border-[#8B4513] focus:ring-2 focus:ring-[#8B4513]/20'} text-[#8B4513] bg-white hover:bg-[#EFDBCD]/50 hover:border-[#8B4513]/50 transition-all duration-200`}>
                                             <SelectValue placeholder="Selecciona una categoría" />
                                         </SelectTrigger>
                                         <SelectContent className="bg-white border-[#8B4513]/20 shadow-lg">
@@ -163,7 +163,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
                                                 <SelectItem
                                                     key={category}
                                                     value={category}
-                                                    className="text-[#8B4513] hover:bg-[#EFDBCD]/50 focus:bg-[#EFDBCD]/50 cursor-pointer"
+                                                    className="text-[#8B4513] hover:bg-[#8B4513]/10 hover:text-[#8B4513] focus:bg-[#8B4513]/10 focus:text-[#8B4513] cursor-pointer transition-colors duration-200"
                                                 >
                                                     {category}
                                                 </SelectItem>
@@ -291,14 +291,14 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
                                         type="button"
                                         variant="outline"
                                         onClick={handleClose}
-                                        className="border-2 border-[#8B4513]/40 text-[#8B4513] hover:bg-[#8B4513]/10 hover:border-[#8B4513]/60 hover:text-[#8B4513]/80 bg-white/80 backdrop-blur-sm transition-all duration-200 font-medium px-6 py-2"
+                                        className="border-2 border-[#8B4513]/40 text-[#8B4513] hover:bg-[#8B4513]/15 hover:border-[#8B4513]/70 hover:text-[#8B4513] bg-white/90 backdrop-blur-sm transition-all duration-200 font-medium px-6 py-2 shadow-sm hover:shadow-md"
                                     >
                                         Cancelar
                                     </Button>
                                     <Button
                                         type="submit"
                                         disabled={processing}
-                                        className="min-w-[120px] bg-[#8B4513] hover:bg-[#A0522D] text-white font-medium px-6 py-2 shadow-lg hover:shadow-xl transition-all duration-200"
+                                        className="min-w-[120px] bg-[#8B4513] hover:bg-[#A0522D] hover:shadow-lg text-white font-medium px-6 py-2 shadow-md transition-all duration-200 hover:scale-105"
                                     >
                                         {processing ? (
                                             <div className="flex items-center">
