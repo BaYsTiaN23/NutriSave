@@ -146,14 +146,14 @@ class BusinessController extends Controller
 
         // Handle sorting
         $sortField = $request->get('sort', 'created_at');
-        $sortOrder = $request->get('order', 'desc');
+        $sortOrder = $request->get('order', 'asc');
         
         // Validate sort field to prevent SQL injection
         $allowedSortFields = ['id', 'name', 'brand', 'category', 'price', 'stock', 'created_at', 'updated_at'];
         if (in_array($sortField, $allowedSortFields)) {
             $query->orderBy($sortField, $sortOrder);
         } else {
-            $query->orderBy('created_at', 'desc'); // Default fallback
+            $query->orderBy('created_at', 'asc'); // Default fallback
         }
 
         // Handle filtering

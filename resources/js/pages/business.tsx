@@ -134,6 +134,7 @@ export default function BusinessPage() {
     const [customerInsights, setCustomerInsights] = useState<CustomerInsight[]>([])
     const [importedProducts, setImportedProducts] = useState<Product[]>([])
     const [loading, setLoading] = useState(true)
+    const [paginationLoading, setPaginationLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
     // Pagination states
@@ -173,6 +174,8 @@ export default function BusinessPage() {
         try {
             if (!fetchOnlyProducts) {
                 setLoading(true)
+            } else {
+                setPaginationLoading(true)
             }
             
             // Fetch business analytics summary (using the existing business ID)
@@ -180,7 +183,7 @@ export default function BusinessPage() {
             
             if (fetchOnlyProducts) {
                 // Only fetch products for pagination
-                const productsResponse = await axios.get(`/api/b2b/businesses/${businessId}/products?page=${page}&per_page=${productsPerPage}&sort=created_at&order=desc`)
+                const productsResponse = await axios.get(`/api/b2b/businesses/${businessId}/products?page=${page}&per_page=${productsPerPage}&sort=created_at&order=asc`)
                 
                 // Handle paginated or nested data structure
                 const productsData = productsResponse.data?.data || productsResponse.data
@@ -192,7 +195,7 @@ export default function BusinessPage() {
                 // Fetch all data including analytics and promotions
                 const [statsResponse, productsResponse, promotionsResponse] = await Promise.all([
                     axios.get(`/api/b2b/businesses/${businessId}/analytics`),
-                    axios.get(`/api/b2b/businesses/${businessId}/products?page=${page}&per_page=${productsPerPage}&sort=created_at&order=desc`),
+                    axios.get(`/api/b2b/businesses/${businessId}/products?page=${page}&per_page=${productsPerPage}&sort=created_at&order=asc`),
                     axios.get(`/api/b2b/businesses/${businessId}/promotions`)
                 ])
 
@@ -385,6 +388,8 @@ export default function BusinessPage() {
         } finally {
             if (!fetchOnlyProducts) {
                 setLoading(false)
+            } else {
+                setPaginationLoading(false)
             }
         }
     }, [productsPerPage])
@@ -479,6 +484,10 @@ export default function BusinessPage() {
 
     // Pagination handlers
     const handlePageChange = (page: number) => {
+        // Validate page bounds
+        if (page < 1 || page > totalPages) {
+            return
+        }
         fetchBusinessData(page, true) // Only fetch products, not the full page data
     }
 
@@ -964,7 +973,15 @@ export default function BusinessPage() {
                                     </div>
 
                                     {/* Lista de productos */}
-                                    <div className="space-y-3">
+                                    <div className="space-y-3 relative">
+                                        {paginationLoading && (
+                                            <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-10">
+                                                <div className="text-center">
+                                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500 mx-auto"></div>
+                                                    <p className="mt-2 text-sm text-gray-600">Cargando productos...</p>
+                                                </div>
+                                            </div>
+                                        )}
                                         {Array.isArray(importedProducts) && importedProducts.length > 0 ? (
                                             importedProducts.map((product) => (
                                                 <Card key={product.id} className="border-l-4 border-l-red-500 bg-white hover:shadow-md transition-shadow">
@@ -1015,19 +1032,34 @@ export default function BusinessPage() {
                                         ) : (
                                             <div className="text-center py-8">
                                                 <FileSpreadsheet className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                                                <p className="text-gray-600 mb-2">No hay productos disponibles</p>
-                                                <p className="text-sm text-gray-500">Importa productos usando el botón "Subir Productos" o agrega productos manualmente.</p>
+                                                {totalProducts > 0 ? (
+                                                    <>
+                                                        <p className="text-gray-600 mb-2">No hay productos en esta página</p>
+                                                        <p className="text-sm text-gray-500">Intenta ir a una página anterior o verifica los filtros aplicados.</p>
+                                                        <Button 
+                                                            onClick={() => handlePageChange(1)}
+                                                            className="mt-4 bg-red-500 hover:bg-red-600 text-white"
+                                                        >
+                                                            Ir a la primera página
+                                                        </Button>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <p className="text-gray-600 mb-2">No hay productos disponibles</p>
+                                                        <p className="text-sm text-gray-500">Importa productos usando el botón "Subir Productos" o agrega productos manualmente.</p>
+                                                    </>
+                                                )}
                                             </div>
                                         )}
                                     </div>
 
                                     {/* Pagination Controls */}
-                                    {Array.isArray(importedProducts) && importedProducts.length > 0 && totalPages > 1 && (
+                                    {totalProducts > 0 && totalPages > 1 && (
                                         <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-200">
                                             <div className="flex items-center gap-2 text-sm text-gray-600">
                                                 <span>Mostrando</span>
                                                 <span className="font-medium text-gray-800">
-                                                    {(currentPage - 1) * productsPerPage + 1} - {Math.min(currentPage * productsPerPage, totalProducts)}
+                                                    {totalProducts > 0 ? (currentPage - 1) * productsPerPage + 1 : 0} - {Math.min(currentPage * productsPerPage, totalProducts)}
                                                 </span>
                                                 <span>de</span>
                                                 <span className="font-medium text-gray-800">{totalProducts}</span>
@@ -1038,7 +1070,7 @@ export default function BusinessPage() {
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => handlePageChange(currentPage - 1)}
-                                                    disabled={currentPage <= 1}
+                                                    disabled={currentPage <= 1 || paginationLoading}
                                                     className="border-red-300 text-red-700 hover:bg-red-50 disabled:opacity-50"
                                                 >
                                                     <ChevronLeft className="w-4 h-4" />
@@ -1059,10 +1091,11 @@ export default function BusinessPage() {
                                                                     variant={page === currentPage ? "default" : "outline"}
                                                                     size="sm"
                                                                     onClick={() => handlePageChange(page)}
+                                                                    disabled={paginationLoading}
                                                                     className={
                                                                         page === currentPage
                                                                             ? "bg-red-500 text-white"
-                                                                            : "border-red-300 text-red-700 hover:bg-red-50"
+                                                                            : "border-red-300 text-red-700 hover:bg-red-50 disabled:opacity-50"
                                                                     }
                                                                 >
                                                                     {page}
@@ -1082,7 +1115,7 @@ export default function BusinessPage() {
                                                     variant="outline"
                                                     size="sm"
                                                     onClick={() => handlePageChange(currentPage + 1)}
-                                                    disabled={currentPage >= totalPages}
+                                                    disabled={currentPage >= totalPages || paginationLoading}
                                                     className="border-red-300 text-red-700 hover:bg-red-50 disabled:opacity-50"
                                                 >
                                                     Siguiente
