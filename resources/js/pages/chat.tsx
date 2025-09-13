@@ -53,15 +53,105 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
     const [shouldUpdateSidebar, setShouldUpdateSidebar] = useState<boolean>(false);
     const [tipOfDay, setTipOfDay] = useState<TipOfDay | null>(null);
     const [inputValue, setInputValue] = useState("");
-    const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(true);
-    const [isTopicsOpen, setIsTopicsOpen] = useState(true);
-    const [isTipOpen, setIsTipOpen] = useState(true);
+    const [isUserScrolling, setIsUserScrolling] = useState(false);
+    
+    // Persistent state for collapsible cards using localStorage
+    const [isQuickActionsOpen, setIsQuickActionsOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('nutrisave-chat-quickactions-open');
+            return stored !== null ? JSON.parse(stored) : true;
+        }
+        return true;
+    });
+    
+    const [isTopicsOpen, setIsTopicsOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('nutrisave-chat-topics-open');
+            return stored !== null ? JSON.parse(stored) : true;
+        }
+        return true;
+    });
+    
+    const [isTipOpen, setIsTipOpen] = useState(() => {
+        if (typeof window !== 'undefined') {
+            const stored = localStorage.getItem('nutrisave-chat-tip-open');
+            return stored !== null ? JSON.parse(stored) : true;
+        }
+        return true;
+    });
+    
     const inputRef = useRef<HTMLInputElement>(null);
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
 
     const currentChatId = chat?.id || null;
     const streamUrl = currentChatId ? `/chat/${currentChatId}/stream` : '/chat/stream';
 
     const { data, send, isStreaming, isFetching } = useStream(streamUrl);
+
+    // Persist collapsible states to localStorage
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('nutrisave-chat-quickactions-open', JSON.stringify(isQuickActionsOpen));
+        }
+    }, [isQuickActionsOpen]);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('nutrisave-chat-topics-open', JSON.stringify(isTopicsOpen));
+        }
+    }, [isTopicsOpen]);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('nutrisave-chat-tip-open', JSON.stringify(isTipOpen));
+        }
+    }, [isTipOpen]);
+
+    // Auto-scroll to bottom of chat
+    const scrollToBottom = useCallback(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, []);
+
+    // Check if user is at bottom of scroll
+    const isAtBottom = useCallback(() => {
+        if (!messagesContainerRef.current) return true;
+        const { scrollTop, scrollHeight, clientHeight } = messagesContainerRef.current;
+        return scrollTop + clientHeight >= scrollHeight - 50; // 50px tolerance
+    }, []);
+
+    // Handle scroll events
+    useEffect(() => {
+        const container = messagesContainerRef.current;
+        if (!container) return;
+
+        const handleScroll = () => {
+            setIsUserScrolling(!isAtBottom());
+        };
+
+        container.addEventListener('scroll', handleScroll);
+        return () => container.removeEventListener('scroll', handleScroll);
+    }, [isAtBottom]);
+
+    // Scroll to bottom when new messages arrive or streaming starts, but only if user is at bottom
+    useEffect(() => {
+        // Only auto-scroll when streaming or when a new message is added and user is at bottom
+        if ((isStreaming || messages.length > 0) && !isUserScrolling) {
+            const timeoutId = setTimeout(() => {
+                scrollToBottom();
+            }, 100);
+            return () => clearTimeout(timeoutId);
+        }
+    }, [messages.length, isStreaming, scrollToBottom, isUserScrolling]);
+
+    // Scroll to bottom when streaming data changes, but only if user is at bottom
+    useEffect(() => {
+        if (isStreaming && data && !isUserScrolling) {
+            scrollToBottom();
+        }
+    }, [data, isStreaming, scrollToBottom, isUserScrolling]);
 
     // Fetch tip of the day
     useEffect(() => {
@@ -85,13 +175,6 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
             }, 100);
         }
     }, [chat?.messages, flash?.stream, send]); // Only run on mount
-
-    // Scroll to bottom when streaming
-    useEffect(() => {
-        if (isStreaming) {
-            window.scrollTo(0, document.body.scrollHeight);
-        }
-    }, [isStreaming, data]);
 
     // Focus input when streaming completes and trigger title generation
     useEffect(() => {
@@ -274,17 +357,21 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                             Pregúntame sobre recetas, precios, organización o cualquier duda culinaria
                                         </CardDescription>
                                     </CardHeader>
-                                    <CardContent className="flex-1 flex flex-col min-h-0">
+                                    <CardContent className="flex-1 flex flex-col min-h-0 p-0">
                                         {/* Messages */}
-                                        <div className="flex-1 overflow-y-auto pr-4">
-                                            <div className="space-y-4">
+                                        <div 
+                                            ref={messagesContainerRef}
+                                            className="flex-1 overflow-y-auto px-6 py-4" 
+                                            style={{ maxHeight: 'calc(100vh - 300px)' }}
+                                        >
+                                            <div className="space-y-4 pb-4">
                                                 {messages.map((message, index) => (
                                                     <div
                                                         key={message.id || index}
                                                         className={`flex gap-3 ${message.type === 'prompt' ? "justify-end" : "justify-start"}`}
                                                     >
                                                         {(message.type === 'response' || message.type === 'error') && (
-                                                            <Avatar className="w-8 h-8">
+                                                            <Avatar className="w-8 h-8 flex-shrink-0">
                                                                 <AvatarFallback className="bg-primary text-primary-foreground">
                                                                     <Bot className="w-4 h-4" />
                                                                 </AvatarFallback>
@@ -301,7 +388,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                                             </p>
                                                         </div>
                                                         {message.type === 'prompt' && (
-                                                            <Avatar className="w-8 h-8">
+                                                            <Avatar className="w-8 h-8 flex-shrink-0">
                                                                 <AvatarImage src="/user-avatar.jpg" alt="Usuario" />
                                                                 <AvatarFallback>
                                                                     <User className="w-4 h-4" />
@@ -314,7 +401,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                                 {/* Current streaming response */}
                                                 {data && data.trim() && (
                                                     <div className="flex gap-3 justify-start">
-                                                        <Avatar className="w-8 h-8">
+                                                        <Avatar className="w-8 h-8 flex-shrink-0">
                                                             <AvatarFallback className="bg-primary text-primary-foreground">
                                                                 <Bot className="w-4 h-4" />
                                                             </AvatarFallback>
@@ -331,7 +418,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                                 {/* Typing Indicator */}
                                                 {isStreaming && (
                                                     <div className="flex gap-3 justify-start">
-                                                        <Avatar className="w-8 h-8">
+                                                        <Avatar className="w-8 h-8 flex-shrink-0">
                                                             <AvatarFallback className="bg-primary text-primary-foreground">
                                                                 <Bot className="w-4 h-4" />
                                                             </AvatarFallback>
@@ -352,49 +439,55 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                                     </div>
                                                 )}
                                             </div>
+                                            {/* Invisible element for scrolling */}
+                                            <div ref={messagesEndRef} />
                                         </div>
 
                                         {/* Input */}
-                                        <form onSubmit={handleSubmit} className="mt-4 flex-shrink-0">
-                                            <div className="flex gap-2">
-                                                <Input
-                                                    ref={inputRef}
-                                                    placeholder="Pregúntame sobre recetas, precios, organización..."
-                                                    value={inputValue}
-                                                    onChange={(e) => setInputValue(e.target.value)}
-                                                    onKeyPress={handleKeyPress}
-                                                    className="flex-1"
-                                                    disabled={isStreaming || isFetching}
-                                                />
-                                                <Button 
-                                                    type="button"
-                                                    onClick={handleSendClick}
-                                                    disabled={!inputValue.trim() || isStreaming || isFetching}
-                                                >
-                                                    <Send className="w-4 h-4" />
-                                                </Button>
-                                            </div>
-                                        </form>
+                                        <div className="flex-shrink-0 p-6 pt-4 border-t">
+                                            <form onSubmit={handleSubmit}>
+                                                <div className="flex gap-2">
+                                                    <Input
+                                                        ref={inputRef}
+                                                        placeholder="Pregúntame sobre recetas, precios, organización..."
+                                                        value={inputValue}
+                                                        onChange={(e) => setInputValue(e.target.value)}
+                                                        onKeyPress={handleKeyPress}
+                                                        className="flex-1"
+                                                        disabled={isStreaming || isFetching}
+                                                    />
+                                                    <Button 
+                                                        type="button"
+                                                        onClick={handleSendClick}
+                                                        disabled={!inputValue.trim() || isStreaming || isFetching}
+                                                    >
+                                                        <Send className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            </form>
+                                        </div>
                                     </CardContent>
                                 </Card>
                             </div>
 
                             {/* Fixed Suggestions Sidebar */}
                             <div className="lg:col-span-1 hidden lg:block">
-                                <div className="fixed top-24 right-8 w-80 h-[calc(100vh-7rem)] overflow-y-auto">
-                                    <div className="space-y-4 pr-4">
+                                <div className="fixed top-24 right-4 w-80 h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                                    <div className="space-y-4 pr-2">
                                         {/* Quick Actions */}
                                         <Collapsible open={isQuickActionsOpen} onOpenChange={setIsQuickActionsOpen}>
-                                            <Card>
+                                            <Card className="transition-all duration-200">
                                                 <CollapsibleTrigger asChild>
                                                     <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                                                         <CardTitle className="text-lg flex items-center justify-between">
                                                             Acciones Rápidas
-                                                            {isQuickActionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                            <div className="transition-transform duration-200">
+                                                                {isQuickActionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                            </div>
                                                         </CardTitle>
                                                     </CardHeader>
                                                 </CollapsibleTrigger>
-                                                <CollapsibleContent>
+                                                <CollapsibleContent className="transition-all duration-200">
                                                     <CardContent className="space-y-2">
                                                         <Button
                                                             variant="outline"
@@ -435,16 +528,18 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
 
                                         {/* Recent Topics */}
                                         <Collapsible open={isTopicsOpen} onOpenChange={setIsTopicsOpen}>
-                                            <Card>
+                                            <Card className="transition-all duration-200">
                                                 <CollapsibleTrigger asChild>
                                                     <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                                                         <CardTitle className="text-lg flex items-center justify-between">
                                                             Temas Populares
-                                                            {isTopicsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                            <div className="transition-transform duration-200">
+                                                                {isTopicsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                            </div>
                                                         </CardTitle>
                                                     </CardHeader>
                                                 </CollapsibleTrigger>
-                                                <CollapsibleContent>
+                                                <CollapsibleContent className="transition-all duration-200">
                                                     <CardContent>
                                                         <div className="space-y-3">
                                                             <div 
@@ -476,16 +571,18 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
 
                                         {/* Tips */}
                                         <Collapsible open={isTipOpen} onOpenChange={setIsTipOpen}>
-                                            <Card>
+                                            <Card className="transition-all duration-200">
                                                 <CollapsibleTrigger asChild>
                                                     <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
                                                         <CardTitle className="text-lg flex items-center justify-between">
                                                             Tip del Día
-                                                            {isTipOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                            <div className="transition-transform duration-200">
+                                                                {isTipOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                            </div>
                                                         </CardTitle>
                                                     </CardHeader>
                                                 </CollapsibleTrigger>
-                                                <CollapsibleContent>
+                                                <CollapsibleContent className="transition-all duration-200">
                                                     <CardContent>
                                                         <div className="p-3 bg-primary/10 rounded-lg">
                                                             <p className="text-sm font-medium mb-2">

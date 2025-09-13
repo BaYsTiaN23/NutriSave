@@ -9,19 +9,25 @@ use Illuminate\Http\Request;
 class TipOfDayController extends Controller
 {
     /**
-     * Get a random tip of the day.
+     * Get a tip of the day based on current date (consistent for the day).
      */
     public function index()
     {
-        $tip = TipOfDay::inRandomOrder()->first();
+        // Use today's date as seed for consistent daily tip
+        $dayOfYear = date('z'); // Day of year (0-365)
+        $totalTips = TipOfDay::count();
         
-        if (!$tip) {
+        if ($totalTips === 0) {
             // Return a default tip if no tips are found in the database
             return response()->json([
                 'title' => 'Ahorra comprando en temporada',
                 'description' => 'Las frutas y verduras de temporada pueden costar hasta 40% menos. Pregúntame qué está en temporada este mes.'
             ]);
         }
+        
+        // Calculate which tip to show based on day of year
+        $tipIndex = $dayOfYear % $totalTips;
+        $tip = TipOfDay::skip($tipIndex)->first();
         
         return response()->json($tip);
     }
