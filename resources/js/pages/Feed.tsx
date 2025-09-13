@@ -128,7 +128,7 @@ export default function Feed({ posts: initialPosts }: FeedProps) {
 
     return (
         <>
-            <Head title="Feed" />
+            <Head title="Comunidad" />
 
             <div className="min-h-screen bg-[#faf9f7]">
                 {/* Header */}
@@ -147,7 +147,7 @@ export default function Feed({ posts: initialPosts }: FeedProps) {
                                 </Button>
                                 <div className="flex items-center gap-2">
                                     <User className="w-6 h-6 text-[#8B4513]" />
-                                    <h1 className="text-xl font-bold text-[#8B4513]">Feed NutriSave</h1>
+                                    <h1 className="text-xl font-bold text-[#8B4513]">Comunidad NutriSave</h1>
                                 </div>
                             </div>
                             <div className="flex items-center space-x-4">
@@ -189,38 +189,7 @@ export default function Feed({ posts: initialPosts }: FeedProps) {
 
                 <div className="container mx-auto px-4 py-8">
                     {/* Stats Bar */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                        <Card className="bg-[#EFDBCD] border-[#8B4513]/20">
-                            <CardContent className="p-4 text-center">
-                                <div className="text-2xl font-bold text-[#8B4513]">{posts.data.length}</div>
-                                <div className="text-sm text-[#8B4513]/70">Posts Totales</div>
-                            </CardContent>
-                        </Card>
-                        <Card className="bg-[#EFDBCD] border-[#8B4513]/20">
-                            <CardContent className="p-4 text-center">
-                                <div className="text-2xl font-bold text-[#8B4513]">
-                                    {posts.data.reduce((sum, post) => sum + post.likes_count, 0)}
-                                </div>
-                                <div className="text-sm text-[#8B4513]/70">Likes Totales</div>
-                            </CardContent>
-                        </Card>
-                        <Card className="bg-[#EFDBCD] border-[#8B4513]/20">
-                            <CardContent className="p-4 text-center">
-                                <div className="text-2xl font-bold text-[#8B4513]">
-                                    {posts.data.reduce((sum, post) => sum + post.comments_count, 0)}
-                                </div>
-                                <div className="text-sm text-[#8B4513]/70">Comentarios</div>
-                            </CardContent>
-                        </Card>
-                        <Card className="bg-[#EFDBCD] border-[#8B4513]/20">
-                            <CardContent className="p-4 text-center">
-                                <div className="text-2xl font-bold text-[#8B4513]">
-                                    {posts.data.reduce((sum, post) => sum + post.shares_count, 0)}
-                                </div>
-                                <div className="text-sm text-[#8B4513]/70">Compartidos</div>
-                            </CardContent>
-                        </Card>
-                    </div>
+
 
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                         {/* Sidebar */}
@@ -394,15 +363,7 @@ export default function Feed({ posts: initialPosts }: FeedProps) {
                                                         <MessageCircle className="w-4 h-4" />
                                                         {post.comments_count}
                                                     </Button>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => handleShare(post.id)}
-                                                        className="text-[#8B4513]/70 hover:bg-green-50 hover:text-green-600 transition-colors"
-                                                    >
-                                                        <Share2 className="w-4 h-4 mr-1" />
-                                                        {post.shares_count}
-                                                    </Button>
+
                                                 </div>
 
                                             </div>

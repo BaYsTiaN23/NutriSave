@@ -263,15 +263,7 @@ export default function PostDetailModal({ isOpen, onClose, postId }: PostDetailM
                                         <span className="text-lg font-medium">{post.comments_count}</span>
                                     </div>
 
-                                    <Button
-                                        variant="ghost"
-                                        size="lg"
-                                        onClick={handleShare}
-                                        className="flex items-center space-x-3 px-4 py-2 text-[#8B4513]/70 hover:text-green-600 hover:bg-green-50"
-                                    >
-                                        <Share2 className="w-6 h-6" />
-                                        <span className="text-lg font-medium">{post.shares_count}</span>
-                                    </Button>
+
                                 </div>
                             </CardFooter>
                         </Card>
