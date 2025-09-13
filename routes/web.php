@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [\App\Http\Controllers\LandingController::class, 'index'])->name('home');
 Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
 Route::get('/community', [\App\Http\Controllers\CommunityController::class, 'index'])->name('community');
-Route::get('/business', [\App\Http\Controllers\BusinessController::class, 'index'])->name('business');
+Route::get('/business', [\App\Http\Controllers\BusinessWebController::class, 'index'])->name('business');
 Route::get('/chat', [\App\Http\Controllers\ChatController::class, 'index'])->name('chat.index');
 
 // Social App Routes
