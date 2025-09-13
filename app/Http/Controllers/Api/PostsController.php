@@ -38,6 +38,7 @@ class PostsController extends Controller
             'title' => 'required|string|max:255',
             'category' => 'required|in:Recipes,Organizations,Offers,Weekly Menu',
             'content' => 'required|string',
+            'lugar' => 'nullable|string|max:255',
             'tags' => 'nullable|string',
             'image' => 'nullable|string' // Changed from url to string for more flexibility
         ]);
@@ -54,6 +55,7 @@ class PostsController extends Controller
             'title' => $request->title,
             'category' => $request->category,
             'content' => $request->content,
+            'lugar' => $request->lugar,
             'tags' => $request->tags,
             'image' => $request->image // Save the provided image URL
         ]);
@@ -116,6 +118,7 @@ class PostsController extends Controller
             'title' => 'sometimes|required|string|max:255',
             'category' => 'sometimes|required|in:Recipes,Organizations,Offers,Weekly Menu',
             'content' => 'sometimes|required|string',
+            'lugar' => 'nullable|string|max:255',
             'tags' => 'nullable|string'
         ]);
 

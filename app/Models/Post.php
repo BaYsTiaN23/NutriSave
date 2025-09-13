@@ -21,6 +21,7 @@ class Post extends Model
         'title',
         'category',
         'content',
+        'lugar',
         'tags',
         'image',
     ];

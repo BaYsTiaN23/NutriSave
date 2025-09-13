@@ -21,6 +21,7 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
         title: '',
         category: '',
         content: '',
+        lugar: '',
         tags: '',
         image: '' // Now stores URL instead of File
     });
@@ -188,6 +189,25 @@ export default function CreatePostModal({ isOpen, onClose }: CreatePostModalProp
                                     />
                                     {errors.content && (
                                         <p className="text-sm text-red-600">{errors.content}</p>
+                                    )}
+                                </div>
+
+                                {/* Lugar */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="lugar" className="text-[#8B4513] font-medium">Lugar</Label>
+                                    <Input
+                                        id="lugar"
+                                        type="text"
+                                        placeholder="Ej: Ciudad de México, Restaurante El Buen Sabor, Mi cocina"
+                                        value={data.lugar}
+                                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setData('lugar', e.target.value)}
+                                        className={`${errors.lugar ? 'border-red-500' : 'border-[#8B4513]/20 focus:border-[#8B4513]'} text-[#8B4513] placeholder:text-[#8B4513]/60`}
+                                    />
+                                    <p className="text-sm text-[#8B4513]/60">
+                                        Comparte dónde se toma la foto, dónde está el restaurante, o la ubicación relevante
+                                    </p>
+                                    {errors.lugar && (
+                                        <p className="text-sm text-red-600">{errors.lugar}</p>
                                     )}
                                 </div>
 

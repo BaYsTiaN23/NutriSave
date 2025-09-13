@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->enum('category', ['Recipes', 'Organizations', 'Offers', 'Weekly Menu']);
             $table->text('content');
+            $table->string('lugar')->nullable(); // location/place field
             $table->string('tags')->nullable(); // comma separated string
             $table->timestamps();
         });
