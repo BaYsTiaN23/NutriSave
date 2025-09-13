@@ -1,5 +1,6 @@
 import TitleGenerator from '@/components/title-generator';
 import SidebarTitleUpdater from '@/components/sidebar-title-updater';
+import ChatList from '@/components/chat-list';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { SidebarProvider } from '@/components/ui/sidebar';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useStream } from '@laravel/stream-react';
 import { Info, Bot, User, ArrowLeft, Send, Sparkles, ShoppingCart, Clock, DollarSign, ChevronDown, ChevronUp } from 'lucide-react';
@@ -299,16 +301,38 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                 />
             )}
             
-            <div className="h-screen bg-background flex flex-col">
-                {/* Header */}
-                <header className="border-b bg-card/50 backdrop-blur-sm z-50 flex-shrink-0">
-                    <div className="container mx-auto px-4 py-4">
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                                <Button variant="ghost" size="sm" onClick={() => router.visit('/')}>
-                                    <ArrowLeft className="w-4 h-4 mr-2" />
-                                    Volver
-                                </Button>
+            <SidebarProvider defaultOpen={true} open={true}>
+                <div className="h-screen bg-background flex">
+                {/* Chat History Sidebar */}
+                <div className="w-80 border-r bg-card/50 backdrop-blur-sm flex-shrink-0 flex flex-col">
+                    {/* Sidebar Header */}
+                    <div className="border-b p-4">
+                        <div className="flex items-center gap-2 mb-4">
+                            <Bot className="w-6 h-6 text-primary" />
+                            <h2 className="font-semibold">NutriSave Chat</h2>
+                        </div>
+                        <Button 
+                            variant="outline" 
+                            className="w-full justify-start" 
+                            onClick={() => router.visit('/')}
+                        >
+                            <ArrowLeft className="w-4 h-4 mr-2" />
+                            Volver al inicio
+                        </Button>
+                    </div>
+                    
+                    {/* Chat List */}
+                    <div className="flex-1 p-4">
+                        <ChatList currentChatId={chat?.id} isAuthenticated={!!auth.user} />
+                    </div>
+                </div>
+
+                {/* Main Chat Area */}
+                <div className="flex-1 flex flex-col">
+                    {/* Header */}
+                    <header className="border-b bg-card/50 backdrop-blur-sm z-50 flex-shrink-0">
+                        <div className="px-6 py-4">
+                            <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
                                     <Bot className="w-6 h-6 text-primary" />
                                     <div>
@@ -325,277 +349,277 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </header>
+                    </header>
 
-                {!auth.user && (
-                    <div className="bg-background border-b p-4 flex-shrink-0">
-                        <Alert className="mx-auto max-w-7xl">
-                            <Info className="h-4 w-4" />
-                            <AlertDescription>
-                                You're chatting anonymously. Your conversation won't be saved.
-                                <Button variant="link" className="h-auto p-0 text-sm" onClick={() => router.visit('/login')}>
-                                    Sign in to save your chats
-                                </Button>
-                            </AlertDescription>
-                        </Alert>
-                    </div>
-                )}
+                    {!auth.user && (
+                        <div className="bg-background border-b p-4 flex-shrink-0">
+                            <Alert>
+                                <Info className="h-4 w-4" />
+                                <AlertDescription>
+                                    You're chatting anonymously. Your conversation won't be saved.
+                                    <Button variant="link" className="h-auto p-0 text-sm" onClick={() => router.visit('/login')}>
+                                        Sign in to save your chats
+                                    </Button>
+                                </AlertDescription>
+                            </Alert>
+                        </div>
+                    )}
 
-                <div className="flex-1 overflow-hidden">
-                    <div className="container mx-auto px-4 py-8 h-full">
-                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full">
-                            {/* Chat Area */}
-                            <div className="lg:col-span-2 flex flex-col">
-                                <Card className="flex-1 flex flex-col">
-                                    <CardHeader className="flex-shrink-0">
-                                        <CardTitle className="flex items-center gap-2">
-                                            <Sparkles className="w-5 h-5" />
-                                            Chat Inteligente
-                                        </CardTitle>
-                                        <CardDescription>
-                                            Pregúntame sobre recetas, precios, organización o cualquier duda culinaria
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardContent className="flex-1 flex flex-col min-h-0 p-0">
-                                        {/* Messages */}
-                                        <div 
-                                            ref={messagesContainerRef}
-                                            className="flex-1 overflow-y-auto px-6 py-4" 
-                                            style={{ maxHeight: 'calc(100vh - 300px)' }}
-                                        >
-                                            <div className="space-y-4 pb-4">
-                                                {messages.map((message, index) => (
-                                                    <div
-                                                        key={message.id || index}
-                                                        className={`flex gap-3 ${message.type === 'prompt' ? "justify-end" : "justify-start"}`}
-                                                    >
-                                                        {(message.type === 'response' || message.type === 'error') && (
+                    <div className="flex-1 overflow-hidden">
+                        <div className="h-full">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full p-6">
+                                {/* Chat Area */}
+                                <div className="lg:col-span-2 flex flex-col">
+                                    <Card className="flex-1 flex flex-col">
+                                        <CardHeader className="flex-shrink-0">
+                                            <CardTitle className="flex items-center gap-2">
+                                                <Sparkles className="w-5 h-5" />
+                                                Chat Inteligente
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Pregúntame sobre recetas, precios, organización o cualquier duda culinaria
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="flex-1 flex flex-col min-h-0 p-0">
+                                            {/* Messages */}
+                                            <div 
+                                                ref={messagesContainerRef}
+                                                className="flex-1 overflow-y-auto px-6 py-4" 
+                                                style={{ maxHeight: 'calc(100vh - 300px)' }}
+                                            >
+                                                <div className="space-y-4 pb-4">
+                                                    {messages.map((message, index) => (
+                                                        <div
+                                                            key={message.id || index}
+                                                            className={`flex gap-3 ${message.type === 'prompt' ? "justify-end" : "justify-start"}`}
+                                                        >
+                                                            {(message.type === 'response' || message.type === 'error') && (
+                                                                <Avatar className="w-8 h-8 flex-shrink-0">
+                                                                    <AvatarFallback className="bg-primary text-primary-foreground">
+                                                                        <Bot className="w-4 h-4" />
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                            )}
+                                                            <div
+                                                                className={`max-w-[80%] rounded-lg p-3 ${
+                                                                    message.type === 'prompt' ? "bg-primary text-primary-foreground ml-auto" : "bg-muted"
+                                                                }`}
+                                                            >
+                                                                <p className="text-sm">{message.content}</p>
+                                                                <p className="text-xs opacity-70 mt-1">
+                                                                    {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                                                </p>
+                                                            </div>
+                                                            {message.type === 'prompt' && (
+                                                                <Avatar className="w-8 h-8 flex-shrink-0">
+                                                                    <AvatarImage src="/user-avatar.jpg" alt="Usuario" />
+                                                                    <AvatarFallback>
+                                                                        <User className="w-4 h-4" />
+                                                                    </AvatarFallback>
+                                                                </Avatar>
+                                                            )}
+                                                        </div>
+                                                    ))}
+
+                                                    {/* Current streaming response */}
+                                                    {data && data.trim() && (
+                                                        <div className="flex gap-3 justify-start">
                                                             <Avatar className="w-8 h-8 flex-shrink-0">
                                                                 <AvatarFallback className="bg-primary text-primary-foreground">
                                                                     <Bot className="w-4 h-4" />
                                                                 </AvatarFallback>
                                                             </Avatar>
-                                                        )}
-                                                        <div
-                                                            className={`max-w-[80%] rounded-lg p-3 ${
-                                                                message.type === 'prompt' ? "bg-primary text-primary-foreground ml-auto" : "bg-muted"
-                                                            }`}
-                                                        >
-                                                            <p className="text-sm">{message.content}</p>
-                                                            <p className="text-xs opacity-70 mt-1">
-                                                                {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                                                            </p>
+                                                            <div className="bg-muted rounded-lg p-3 max-w-[80%]">
+                                                                <p className="text-sm">{data}</p>
+                                                                <p className="text-xs opacity-70 mt-1">
+                                                                    {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                                                </p>
+                                                            </div>
                                                         </div>
-                                                        {message.type === 'prompt' && (
+                                                    )}
+
+                                                    {/* Typing Indicator */}
+                                                    {isStreaming && (
+                                                        <div className="flex gap-3 justify-start">
                                                             <Avatar className="w-8 h-8 flex-shrink-0">
-                                                                <AvatarImage src="/user-avatar.jpg" alt="Usuario" />
-                                                                <AvatarFallback>
-                                                                    <User className="w-4 h-4" />
+                                                                <AvatarFallback className="bg-primary text-primary-foreground">
+                                                                    <Bot className="w-4 h-4" />
                                                                 </AvatarFallback>
                                                             </Avatar>
-                                                        )}
-                                                    </div>
-                                                ))}
-
-                                                {/* Current streaming response */}
-                                                {data && data.trim() && (
-                                                    <div className="flex gap-3 justify-start">
-                                                        <Avatar className="w-8 h-8 flex-shrink-0">
-                                                            <AvatarFallback className="bg-primary text-primary-foreground">
-                                                                <Bot className="w-4 h-4" />
-                                                            </AvatarFallback>
-                                                        </Avatar>
-                                                        <div className="bg-muted rounded-lg p-3 max-w-[80%]">
-                                                            <p className="text-sm">{data}</p>
-                                                            <p className="text-xs opacity-70 mt-1">
-                                                                {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                )}
-
-                                                {/* Typing Indicator */}
-                                                {isStreaming && (
-                                                    <div className="flex gap-3 justify-start">
-                                                        <Avatar className="w-8 h-8 flex-shrink-0">
-                                                            <AvatarFallback className="bg-primary text-primary-foreground">
-                                                                <Bot className="w-4 h-4" />
-                                                            </AvatarFallback>
-                                                        </Avatar>
-                                                        <div className="bg-muted rounded-lg p-3">
-                                                            <div className="flex space-x-1">
-                                                                <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
-                                                                <div
-                                                                    className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
-                                                                    style={{ animationDelay: "0.1s" }}
-                                                                ></div>
-                                                                <div
-                                                                    className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
-                                                                    style={{ animationDelay: "0.2s" }}
-                                                                ></div>
+                                                            <div className="bg-muted rounded-lg p-3">
+                                                                <div className="flex space-x-1">
+                                                                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
+                                                                    <div
+                                                                        className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                                                                        style={{ animationDelay: "0.1s" }}
+                                                                    ></div>
+                                                                    <div
+                                                                        className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                                                                        style={{ animationDelay: "0.2s" }}
+                                                                    ></div>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            {/* Invisible element for scrolling */}
-                                            <div ref={messagesEndRef} />
-                                        </div>
-
-                                        {/* Input */}
-                                        <div className="flex-shrink-0 p-6 pt-4 border-t">
-                                            <form onSubmit={handleSubmit}>
-                                                <div className="flex gap-2">
-                                                    <Input
-                                                        ref={inputRef}
-                                                        placeholder="Pregúntame sobre recetas, precios, organización..."
-                                                        value={inputValue}
-                                                        onChange={(e) => setInputValue(e.target.value)}
-                                                        onKeyPress={handleKeyPress}
-                                                        className="flex-1"
-                                                        disabled={isStreaming || isFetching}
-                                                    />
-                                                    <Button 
-                                                        type="button"
-                                                        onClick={handleSendClick}
-                                                        disabled={!inputValue.trim() || isStreaming || isFetching}
-                                                    >
-                                                        <Send className="w-4 h-4" />
-                                                    </Button>
+                                                    )}
                                                 </div>
-                                            </form>
+                                                {/* Invisible element for scrolling */}
+                                                <div ref={messagesEndRef} />
+                                            </div>
+
+                                            {/* Input */}
+                                            <div className="flex-shrink-0 p-6 pt-4 border-t">
+                                                <form onSubmit={handleSubmit}>
+                                                    <div className="flex gap-2">
+                                                        <Input
+                                                            ref={inputRef}
+                                                            placeholder="Pregúntame sobre recetas, precios, organización..."
+                                                            value={inputValue}
+                                                            onChange={(e) => setInputValue(e.target.value)}
+                                                            onKeyPress={handleKeyPress}
+                                                            className="flex-1"
+                                                            disabled={isStreaming || isFetching}
+                                                        />
+                                                        <Button 
+                                                            type="button"
+                                                            onClick={handleSendClick}
+                                                            disabled={!inputValue.trim() || isStreaming || isFetching}
+                                                        >
+                                                            <Send className="w-4 h-4" />
+                                                        </Button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+
+                                {/* Fixed Suggestions Sidebar */}
+                                <div className="lg:col-span-1 hidden lg:block">
+                                    <div className="fixed top-24 right-4 w-80 h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                                        <div className="space-y-4 pr-2">
+                                            {/* Quick Actions */}
+                                            <Collapsible open={isQuickActionsOpen} onOpenChange={setIsQuickActionsOpen}>
+                                                <Card className="transition-all duration-200">
+                                                    <CollapsibleTrigger asChild>
+                                                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                                                            <CardTitle className="text-lg flex items-center justify-between">
+                                                                Acciones Rápidas
+                                                                <div className="transition-transform duration-200">
+                                                                    {isQuickActionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                                </div>
+                                                            </CardTitle>
+                                                        </CardHeader>
+                                                    </CollapsibleTrigger>
+                                                    <CollapsibleContent className="transition-all duration-200">
+                                                        <CardContent className="space-y-2">
+                                                            <Button
+                                                                variant="outline"
+                                                                className="w-full justify-start bg-transparent"
+                                                                onClick={() => setInputValue("¿Qué puedo cocinar con pollo y arroz?")}
+                                                            >
+                                                                <Sparkles className="w-4 h-4 mr-2" />
+                                                                Sugerir receta
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                className="w-full justify-start bg-transparent"
+                                                                onClick={() => setInputValue("¿Dónde está más barato el aceite de oliva?")}
+                                                            >
+                                                                <DollarSign className="w-4 h-4 mr-2" />
+                                                                Comparar precios
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                className="w-full justify-start bg-transparent"
+                                                                onClick={() => setInputValue("¿Cómo organizo mi despensa?")}
+                                                            >
+                                                                <ShoppingCart className="w-4 h-4 mr-2" />
+                                                                Tips de organización
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                className="w-full justify-start bg-transparent"
+                                                                onClick={() => setInputValue("Menú semanal para 4 personas con $300")}
+                                                            >
+                                                                <Clock className="w-4 h-4 mr-2" />
+                                                                Planificar menú
+                                                            </Button>
+                                                        </CardContent>
+                                                    </CollapsibleContent>
+                                                </Card>
+                                            </Collapsible>
+
+                                            {/* Recent Topics */}
+                                            <Collapsible open={isTopicsOpen} onOpenChange={setIsTopicsOpen}>
+                                                <Card className="transition-all duration-200">
+                                                    <CollapsibleTrigger asChild>
+                                                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                                                            <CardTitle className="text-lg flex items-center justify-between">
+                                                                Temas Populares
+                                                                <div className="transition-transform duration-200">
+                                                                    {isTopicsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                                </div>
+                                                            </CardTitle>
+                                                        </CardHeader>
+                                                    </CollapsibleTrigger>
+                                                    <CollapsibleContent className="transition-all duration-200">
+                                                        <CardContent>
+                                                            <div className="space-y-3">
+                                                                <div 
+                                                                    className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
+                                                                    onClick={() => setInputValue("Recetas con pollo económicas")}
+                                                                >
+                                                                    <p className="text-sm font-medium">Recetas con pollo económicas</p>
+                                                                    <p className="text-xs text-muted-foreground">Preguntado 15 veces hoy</p>
+                                                                </div>
+                                                                <div 
+                                                                    className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
+                                                                    onClick={() => setInputValue("Organizar despensa pequeña")}
+                                                                >
+                                                                    <p className="text-sm font-medium">Organizar despensa pequeña</p>
+                                                                    <p className="text-xs text-muted-foreground">Preguntado 12 veces hoy</p>
+                                                                </div>
+                                                                <div 
+                                                                    className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
+                                                                    onClick={() => setInputValue("Menús vegetarianos baratos")}
+                                                                >
+                                                                    <p className="text-sm font-medium">Menús vegetarianos baratos</p>
+                                                                    <p className="text-xs text-muted-foreground">Preguntado 8 veces hoy</p>
+                                                                </div>
+                                                            </div>
+                                                        </CardContent>
+                                                    </CollapsibleContent>
+                                                </Card>
+                                            </Collapsible>
+
+                                            {/* Tips */}
+                                            <Collapsible open={isTipOpen} onOpenChange={setIsTipOpen}>
+                                                <Card className="transition-all duration-200">
+                                                    <CollapsibleTrigger asChild>
+                                                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                                                            <CardTitle className="text-lg flex items-center justify-between">
+                                                                Tip del Día
+                                                                <div className="transition-transform duration-200">
+                                                                    {isTipOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                                </div>
+                                                            </CardTitle>
+                                                        </CardHeader>
+                                                    </CollapsibleTrigger>
+                                                    <CollapsibleContent className="transition-all duration-200">
+                                                        <CardContent>
+                                                            <div className="p-3 bg-primary/10 rounded-lg">
+                                                                <p className="text-sm font-medium mb-2">
+                                                                    {tipOfDay?.title || "Ahorra comprando en temporada"}
+                                                                </p>
+                                                                <p className="text-xs text-muted-foreground">
+                                                                    {tipOfDay?.description || "Las frutas y verduras de temporada pueden costar hasta 40% menos. Pregúntame qué está en temporada este mes."}
+                                                                </p>
+                                                            </div>
+                                                        </CardContent>
+                                                    </CollapsibleContent>
+                                                </Card>
+                                            </Collapsible>
                                         </div>
-                                    </CardContent>
-                                </Card>
-                            </div>
-
-                            {/* Fixed Suggestions Sidebar */}
-                            <div className="lg:col-span-1 hidden lg:block">
-                                <div className="fixed top-24 right-4 w-80 h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                                    <div className="space-y-4 pr-2">
-                                        {/* Quick Actions */}
-                                        <Collapsible open={isQuickActionsOpen} onOpenChange={setIsQuickActionsOpen}>
-                                            <Card className="transition-all duration-200">
-                                                <CollapsibleTrigger asChild>
-                                                    <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                                                        <CardTitle className="text-lg flex items-center justify-between">
-                                                            Acciones Rápidas
-                                                            <div className="transition-transform duration-200">
-                                                                {isQuickActionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                                                            </div>
-                                                        </CardTitle>
-                                                    </CardHeader>
-                                                </CollapsibleTrigger>
-                                                <CollapsibleContent className="transition-all duration-200">
-                                                    <CardContent className="space-y-2">
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full justify-start bg-transparent"
-                                                            onClick={() => setInputValue("¿Qué puedo cocinar con pollo y arroz?")}
-                                                        >
-                                                            <Sparkles className="w-4 h-4 mr-2" />
-                                                            Sugerir receta
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full justify-start bg-transparent"
-                                                            onClick={() => setInputValue("¿Dónde está más barato el aceite de oliva?")}
-                                                        >
-                                                            <DollarSign className="w-4 h-4 mr-2" />
-                                                            Comparar precios
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full justify-start bg-transparent"
-                                                            onClick={() => setInputValue("¿Cómo organizo mi despensa?")}
-                                                        >
-                                                            <ShoppingCart className="w-4 h-4 mr-2" />
-                                                            Tips de organización
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full justify-start bg-transparent"
-                                                            onClick={() => setInputValue("Menú semanal para 4 personas con $300")}
-                                                        >
-                                                            <Clock className="w-4 h-4 mr-2" />
-                                                            Planificar menú
-                                                        </Button>
-                                                    </CardContent>
-                                                </CollapsibleContent>
-                                            </Card>
-                                        </Collapsible>
-
-                                        {/* Recent Topics */}
-                                        <Collapsible open={isTopicsOpen} onOpenChange={setIsTopicsOpen}>
-                                            <Card className="transition-all duration-200">
-                                                <CollapsibleTrigger asChild>
-                                                    <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                                                        <CardTitle className="text-lg flex items-center justify-between">
-                                                            Temas Populares
-                                                            <div className="transition-transform duration-200">
-                                                                {isTopicsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                                                            </div>
-                                                        </CardTitle>
-                                                    </CardHeader>
-                                                </CollapsibleTrigger>
-                                                <CollapsibleContent className="transition-all duration-200">
-                                                    <CardContent>
-                                                        <div className="space-y-3">
-                                                            <div 
-                                                                className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
-                                                                onClick={() => setInputValue("Recetas con pollo económicas")}
-                                                            >
-                                                                <p className="text-sm font-medium">Recetas con pollo económicas</p>
-                                                                <p className="text-xs text-muted-foreground">Preguntado 15 veces hoy</p>
-                                                            </div>
-                                                            <div 
-                                                                className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
-                                                                onClick={() => setInputValue("Organizar despensa pequeña")}
-                                                            >
-                                                                <p className="text-sm font-medium">Organizar despensa pequeña</p>
-                                                                <p className="text-xs text-muted-foreground">Preguntado 12 veces hoy</p>
-                                                            </div>
-                                                            <div 
-                                                                className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
-                                                                onClick={() => setInputValue("Menús vegetarianos baratos")}
-                                                            >
-                                                                <p className="text-sm font-medium">Menús vegetarianos baratos</p>
-                                                                <p className="text-xs text-muted-foreground">Preguntado 8 veces hoy</p>
-                                                            </div>
-                                                        </div>
-                                                    </CardContent>
-                                                </CollapsibleContent>
-                                            </Card>
-                                        </Collapsible>
-
-                                        {/* Tips */}
-                                        <Collapsible open={isTipOpen} onOpenChange={setIsTipOpen}>
-                                            <Card className="transition-all duration-200">
-                                                <CollapsibleTrigger asChild>
-                                                    <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                                                        <CardTitle className="text-lg flex items-center justify-between">
-                                                            Tip del Día
-                                                            <div className="transition-transform duration-200">
-                                                                {isTipOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                                                            </div>
-                                                        </CardTitle>
-                                                    </CardHeader>
-                                                </CollapsibleTrigger>
-                                                <CollapsibleContent className="transition-all duration-200">
-                                                    <CardContent>
-                                                        <div className="p-3 bg-primary/10 rounded-lg">
-                                                            <p className="text-sm font-medium mb-2">
-                                                                {tipOfDay?.title || "Ahorra comprando en temporada"}
-                                                            </p>
-                                                            <p className="text-xs text-muted-foreground">
-                                                                {tipOfDay?.description || "Las frutas y verduras de temporada pueden costar hasta 40% menos. Pregúntame qué está en temporada este mes."}
-                                                            </p>
-                                                        </div>
-                                                    </CardContent>
-                                                </CollapsibleContent>
-                                            </Card>
-                                        </Collapsible>
                                     </div>
                                 </div>
                             </div>
@@ -603,6 +627,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                     </div>
                 </div>
             </div>
+            </SidebarProvider>
         </>
     );
 }
