@@ -290,7 +290,7 @@ export default function Landing() {
                         <div className="bg-[#FFEEDC] border-2 border-orange-200 rounded-2xl h-56 lg:min-h-[416px] flex items-center justify-center overflow-hidden">
                             <div className="w-full h-full bg-gray-300 rounded-xl flex items-center justify-center transform -rotate-2 translate-x-14 translate-y-10">
                                 <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-400 rounded-xl flex items-center justify-center">
-                                    <span className="text-gray-500 text-lg">Imagen</span>
+                                    <img src="/images/uno.png" alt="Imagen" className="w-full h-full object-fit" />
                                 </div>
                             </div>
                         </div>
@@ -301,7 +301,7 @@ export default function Landing() {
                             <div className="bg-[#F1E8FE] border-2 border-purple-200 rounded-2xl h-48 lg:h-48 flex items-center justify-center overflow-hidden">
                                 <div className="w-[80%] h-[80%] bg-gray-300 rounded-xl flex items-center justify-center mx-auto translate-y-5">
                                     <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-400 rounded-xl flex items-center justify-center">
-                                        <span className="text-gray-500 text-sm">Imagen</span>
+                                        <img src="/images/dos.png" alt="Imagen" className="w-full h-full object-fit" />
                                     </div>
                                 </div>
                             </div>
@@ -310,7 +310,7 @@ export default function Landing() {
                             <div className="bg-[#FFE6E6] border-2 border-pink-200 rounded-2xl h-48 lg:h-48 flex items-center justify-center overflow-hidden">
                                 <div className="w-[90%] h-[80%] bg-gray-300 rounded-xl flex items-center justify-center transform rotate-2 translate-y-6">
                                     <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-400 rounded-xl flex items-center justify-center">
-                                        <span className="text-gray-500 text-sm">Imagen</span>
+                                        <img src="/images/tres.png" alt="Imagen" className="w-full h-full object-fit" />
                                     </div>
                                 </div>
                             </div>
