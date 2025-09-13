@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chat;
+use App\Services\MenuResponseService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -281,7 +282,25 @@ class ChatController extends Controller
                     'role' => 'system',
                     'content' => $profileContext
                 ]);
+            } else {
+                // User is authenticated but has no profile - add basic context with menu instructions
+                $basicContext = "You are NutriSave, a nutrition and wellness AI assistant. Provide helpful nutrition advice, meal suggestions, and health recommendations.\n\n";
+                $basicContext .= MenuResponseService::getMenuStructureDefinition();
+                
+                array_unshift($openAIMessages, [
+                    'role' => 'system',
+                    'content' => $basicContext
+                ]);
             }
+        } else {
+            // Anonymous user - add basic context with menu instructions
+            $basicContext = "You are NutriSave, a nutrition and wellness AI assistant. Provide helpful nutrition advice, meal suggestions, and health recommendations.\n\n";
+            $basicContext .= MenuResponseService::getMenuStructureDefinition();
+            
+            array_unshift($openAIMessages, [
+                'role' => 'system',
+                'content' => $basicContext
+            ]);
         }
 
         return $openAIMessages;
@@ -349,7 +368,10 @@ class ChatController extends Controller
             $context .= "Allergens to Avoid: {$allergens}\n";
         }
         
-        $context .= "\nPlease provide personalized nutrition advice, meal suggestions, and health recommendations based on this profile. Always consider their medical conditions, dietary restrictions, allergens, and health goals when making suggestions. Be supportive and informative while encouraging healthy lifestyle choices.";
+        $context .= "\nPlease provide personalized nutrition advice, meal suggestions, and health recommendations based on this profile. Always consider their medical conditions, dietary restrictions, allergens, and health goals when making suggestions. Be supportive and informative while encouraging healthy lifestyle choices.\n\n";
+        
+        // Add menu response instructions
+        $context .= MenuResponseService::getMenuStructureDefinition();
         
         return $context;
     }

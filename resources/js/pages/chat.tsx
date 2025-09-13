@@ -1,6 +1,7 @@
 import TitleGenerator from '@/components/title-generator';
 import SidebarTitleUpdater from '@/components/sidebar-title-updater';
 import ChatList from '@/components/chat-list';
+import { MenuDisplay } from '@/components/MenuDisplay';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -90,6 +91,35 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
     const streamUrl = currentChatId ? `/chat/${currentChatId}/stream` : '/chat/stream';
 
     const { data, send, isStreaming, isFetching } = useStream(streamUrl);
+
+    // Utility functions for menu parsing
+    const isMenuResponse = (content: string): boolean => {
+        const pattern = /```json\s*\{[^}]*"type"\s*:\s*"menu_response"/s;
+        return pattern.test(content);
+    };
+
+    const extractMenuJson = (content: string): any | null => {
+        const pattern = /```json\s*(\{.*?\})\s*```/s;
+        const match = content.match(pattern);
+        if (match) {
+            try {
+                const jsonString = match[1];
+                const decoded = JSON.parse(jsonString);
+                if (decoded.type === 'menu_response') {
+                    return decoded;
+                }
+            } catch (error) {
+                console.error('Error parsing menu JSON:', error);
+            }
+        }
+        return null;
+    };
+
+    const extractTextFromMenuResponse = (content: string): string => {
+        // Remove the JSON code block and return the remaining text
+        const pattern = /```json\s*\{.*?\}\s*```/s;
+        return content.replace(pattern, '').trim();
+    };
 
     // Persist collapsible states to localStorage
     useEffect(() => {
@@ -430,38 +460,54 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                                 style={{ maxHeight: 'calc(100vh - 300px)' }}
                                             >
                                                 <div className="space-y-4 pb-4">
-                                                    {messages.map((message, index) => (
-                                                        <div
-                                                            key={message.id || index}
-                                                            className={`flex gap-3 ${message.type === 'prompt' ? "justify-end" : "justify-start"}`}
-                                                        >
-                                                            {(message.type === 'response' || message.type === 'error') && (
-                                                                <Avatar className="w-8 h-8 flex-shrink-0">
-                                                                    <AvatarFallback className="bg-primary text-primary-foreground">
-                                                                        <Bot className="w-4 h-4" />
-                                                                    </AvatarFallback>
-                                                                </Avatar>
-                                                            )}
+                                                    {messages.map((message, index) => {
+                                                        const menuData = message.type === 'response' ? extractMenuJson(message.content) : null;
+                                                        const textContent = menuData ? extractTextFromMenuResponse(message.content) : message.content;
+                                                        
+                                                        return (
                                                             <div
-                                                                className={`max-w-[80%] rounded-lg p-3 ${
-                                                                    message.type === 'prompt' ? "bg-primary text-primary-foreground ml-auto" : "bg-muted"
-                                                                }`}
+                                                                key={message.id || index}
+                                                                className={`flex gap-3 ${message.type === 'prompt' ? "justify-end" : "justify-start"}`}
                                                             >
-                                                                <p className="text-sm">{message.content}</p>
-                                                                <p className="text-xs opacity-70 mt-1">
-                                                                    {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                                                                </p>
+                                                                {(message.type === 'response' || message.type === 'error') && (
+                                                                    <Avatar className="w-8 h-8 flex-shrink-0">
+                                                                        <AvatarFallback className="bg-primary text-primary-foreground">
+                                                                            <Bot className="w-4 h-4" />
+                                                                        </AvatarFallback>
+                                                                    </Avatar>
+                                                                )}
+                                                                <div
+                                                                    className={`max-w-[80%] rounded-lg p-3 ${
+                                                                        message.type === 'prompt' ? "bg-primary text-primary-foreground ml-auto" : "bg-muted"
+                                                                    }`}
+                                                                >
+                                                                    {menuData ? (
+                                                                        <div className="space-y-4">
+                                                                            <MenuDisplay menuData={menuData} />
+                                                                            {textContent && (
+                                                                                <div className="pt-4 border-t">
+                                                                                    <p className="text-sm">{textContent}</p>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    ) : (
+                                                                        <p className="text-sm">{textContent}</p>
+                                                                    )}
+                                                                    <p className="text-xs opacity-70 mt-1">
+                                                                        {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                                                                    </p>
+                                                                </div>
+                                                                {message.type === 'prompt' && (
+                                                                    <Avatar className="w-8 h-8 flex-shrink-0">
+                                                                        <AvatarImage src="/user-avatar.jpg" alt="Usuario" />
+                                                                        <AvatarFallback>
+                                                                            <User className="w-4 h-4" />
+                                                                        </AvatarFallback>
+                                                                    </Avatar>
+                                                                )}
                                                             </div>
-                                                            {message.type === 'prompt' && (
-                                                                <Avatar className="w-8 h-8 flex-shrink-0">
-                                                                    <AvatarImage src="/user-avatar.jpg" alt="Usuario" />
-                                                                    <AvatarFallback>
-                                                                        <User className="w-4 h-4" />
-                                                                    </AvatarFallback>
-                                                                </Avatar>
-                                                            )}
-                                                        </div>
-                                                    ))}
+                                                        );
+                                                    })}
 
                                                     {/* Current streaming response */}
                                                     {data && data.trim() && (
@@ -472,7 +518,23 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                                                 </AvatarFallback>
                                                             </Avatar>
                                                             <div className="bg-muted rounded-lg p-3 max-w-[80%]">
-                                                                <p className="text-sm">{data}</p>
+                                                                {(() => {
+                                                                    const streamingMenuData = extractMenuJson(data);
+                                                                    const streamingTextContent = streamingMenuData ? extractTextFromMenuResponse(data) : data;
+                                                                    
+                                                                    return streamingMenuData ? (
+                                                                        <div className="space-y-4">
+                                                                            <MenuDisplay menuData={streamingMenuData} />
+                                                                            {streamingTextContent && (
+                                                                                <div className="pt-4 border-t">
+                                                                                    <p className="text-sm">{streamingTextContent}</p>
+                                                                                </div>
+                                                                            )}
+                                                                        </div>
+                                                                    ) : (
+                                                                        <p className="text-sm">{streamingTextContent}</p>
+                                                                    );
+                                                                })()}
                                                                 <p className="text-xs opacity-70 mt-1">
                                                                     {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                                                                 </p>
