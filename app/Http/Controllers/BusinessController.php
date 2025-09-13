@@ -116,14 +116,24 @@ class BusinessController extends Controller
     {
         $totalProducts = $business->products()->count();
         $activePromotions = $business->promotions()->active()->count();
-        $totalRevenue = $business->analytics()->revenue()->sum('value');
-        $totalViews = $business->analytics()->views()->sum('value');
+        $totalRevenue = $business->analytics()->where('metric', 'revenue')->sum('value');
+        $totalViews = $business->analytics()->where('metric', 'views')->sum('value');
+        $totalClicks = $business->analytics()->where('metric', 'clicks')->sum('value');
+        $conversions = $business->analytics()->where('metric', 'conversions')->sum('value');
+
+        // Calculate CTR and conversion rate
+        $ctr = $totalViews > 0 ? ($totalClicks / $totalViews) * 100 : 0;
+        $conversionRate = $totalClicks > 0 ? ($conversions / $totalClicks) * 100 : 0;
 
         return response()->json([
+            'totalViews' => (int) $totalViews,
+            'totalClicks' => (int) $totalClicks,
+            'conversions' => (int) $conversions,
+            'revenue' => (float) $totalRevenue,
+            'ctr' => round($ctr, 1),
+            'conversionRate' => round($conversionRate, 1),
             'total_products' => $totalProducts,
             'active_promotions' => $activePromotions,
-            'total_revenue' => $totalRevenue,
-            'total_views' => $totalViews,
         ]);
     }
 
