@@ -47,7 +47,6 @@ export default function ChatList({ currentChatId, isAuthenticated }: ChatListPro
     const { data, setData, patch, processing } = useForm({
         title: '',
     });
-    const { post: createChat, processing: createProcessing } = useForm();
 
     const fetchChats = useCallback(
         async (force = false) => {
@@ -123,11 +122,7 @@ export default function ChatList({ currentChatId, isAuthenticated }: ChatListPro
         if (!isAuthenticated) {
             router.visit('/login');
         } else {
-            createChat('/chat', {
-                onSuccess: () => {
-                    // Chats will refresh when currentChatId changes
-                },
-            });
+            router.visit('/chat');
         }
     };
 
@@ -205,7 +200,7 @@ export default function ChatList({ currentChatId, isAuthenticated }: ChatListPro
             <div className="flex h-full flex-col">
                 <div className={cn('mb-2 flex items-center', state === 'collapsed' ? 'justify-center' : 'justify-between')}>
                     {state === 'expanded' && <h3 className="text-sm font-semibold">Chats</h3>}
-                    <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleNewChat} disabled={createProcessing}>
+                    <Button size="icon" variant="ghost" className="h-6 w-6" onClick={handleNewChat}>
                         <Plus className="h-4 w-4" />
                     </Button>
                 </div>

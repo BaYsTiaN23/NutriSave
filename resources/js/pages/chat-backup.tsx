@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { SidebarProvider } from '@/components/ui/sidebar';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useStream } from '@laravel/stream-react';
 import { Info, Bot, User, ArrowLeft, Send, Sparkles, ShoppingCart, Clock, DollarSign, ChevronDown, ChevronUp } from 'lucide-react';
@@ -167,23 +166,6 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
     useEffect(() => {
         inputRef.current?.focus();
 
-        // Check for pending message from chat creation
-        const pendingMessage = sessionStorage.getItem('pendingMessage');
-        if (pendingMessage && chat) {
-            sessionStorage.removeItem('pendingMessage');
-            setInputValue(pendingMessage);
-            // Auto-send the pending message
-            setTimeout(() => {
-                const toAdd: Message[] = [{
-                    type: 'prompt',
-                    content: pendingMessage,
-                }];
-                setMessages(toAdd);
-                send({ messages: toAdd });
-            }, 100);
-            return;
-        }
-
         // Auto-stream if we have a chat with exactly 1 message (newly created chat)
         // OR if flash.stream is true (fallback)
         const shouldAutoStream = chat?.messages?.length === 1 || (flash?.stream && chat?.messages && chat.messages.length > 0);
@@ -193,7 +175,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                 send({ messages: chat.messages });
             }, 100);
         }
-    }, [chat?.messages, flash?.stream, send, chat]); // Only run on mount
+    }, [chat?.messages, flash?.stream, send]); // Only run on mount
 
     // Focus input when streaming completes and trigger title generation
     useEffect(() => {
@@ -226,18 +208,6 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
 
         if (!query) return;
 
-        // If no current chat exists and user is authenticated, create a new chat first
-        if (!chat && auth.user) {
-            router.post('/chat', {}, {
-                onSuccess: () => {
-                    // The new chat will be created and we'll be redirected to it
-                    // We can store the query to send after redirect
-                    sessionStorage.setItem('pendingMessage', query);
-                },
-            });
-            return;
-        }
-
         const toAdd: Message[] = [];
 
         // If there's a completed response from previous streaming, add it first
@@ -262,7 +232,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
 
         setInputValue('');
         inputRef.current?.focus();
-    }, [send, data, messages, inputValue, chat, auth.user]);
+    }, [send, data, messages, inputValue]);
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -274,19 +244,6 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
     const handleSendClick = () => {
         if (inputValue.trim()) {
             const query = inputValue.trim();
-
-            // If no current chat exists and user is authenticated, create a new chat first
-            if (!chat && auth.user) {
-                router.post('/chat', {}, {
-                    onSuccess: () => {
-                        // The new chat will be created and we'll be redirected to it
-                        // We can store the query to send after redirect
-                        sessionStorage.setItem('pendingMessage', query);
-                    },
-                });
-                return;
-            }
-
             const toAdd: Message[] = [];
 
             // If there's a completed response from previous streaming, add it first
@@ -343,8 +300,7 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                 />
             )}
             
-            <SidebarProvider defaultOpen={true} open={true}>
-                <div className="h-screen bg-background flex">
+            <div className="h-screen bg-background flex">
                 {/* Chat History Sidebar */}
                 <div className="w-80 border-r bg-card/50 backdrop-blur-sm flex-shrink-0 flex flex-col">
                     {/* Sidebar Header */}
@@ -409,9 +365,9 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
 
                     <div className="flex-1 overflow-hidden">
                         <div className="h-full">
-                            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full p-6">
-                                {/* Chat Area - Takes 3 columns for more width */}
-                                <div className="lg:col-span-3 flex flex-col">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-full p-6">
+                                {/* Chat Area */}
+                                <div className="lg:col-span-2 flex flex-col">
                                     <Card className="flex-1 flex flex-col">
                                         <CardHeader className="flex-shrink-0">
                                             <CardTitle className="flex items-center gap-2">
@@ -535,131 +491,133 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                                     </Card>
                                 </div>
 
-                                {/* Suggestions Sidebar - Takes 1 column */}
+                                {/* Fixed Suggestions Sidebar */}
                                 <div className="lg:col-span-1 hidden lg:block">
-                                    <div className="space-y-4 h-full overflow-y-auto">
-                                        {/* Quick Actions */}
-                                        <Collapsible open={isQuickActionsOpen} onOpenChange={setIsQuickActionsOpen}>
-                                            <Card className="transition-all duration-200">
-                                                <CollapsibleTrigger asChild>
-                                                    <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                                                        <CardTitle className="text-lg flex items-center justify-between">
-                                                            Acciones Rápidas
-                                                            <div className="transition-transform duration-200">
-                                                                {isQuickActionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                                                            </div>
-                                                        </CardTitle>
-                                                    </CardHeader>
-                                                </CollapsibleTrigger>
-                                                <CollapsibleContent className="transition-all duration-200">
-                                                    <CardContent className="space-y-2">
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full justify-start bg-transparent"
-                                                            onClick={() => setInputValue("¿Qué puedo cocinar con pollo y arroz?")}
-                                                        >
-                                                            <Sparkles className="w-4 h-4 mr-2" />
-                                                            Sugerir receta
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full justify-start bg-transparent"
-                                                            onClick={() => setInputValue("¿Dónde está más barato el aceite de oliva?")}
-                                                        >
-                                                            <DollarSign className="w-4 h-4 mr-2" />
-                                                            Comparar precios
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full justify-start bg-transparent"
-                                                            onClick={() => setInputValue("¿Cómo organizo mi despensa?")}
-                                                        >
-                                                            <ShoppingCart className="w-4 h-4 mr-2" />
-                                                            Tips de organización
-                                                        </Button>
-                                                        <Button
-                                                            variant="outline"
-                                                            className="w-full justify-start bg-transparent"
-                                                            onClick={() => setInputValue("Menú semanal para 4 personas con $300")}
-                                                        >
-                                                            <Clock className="w-4 h-4 mr-2" />
-                                                            Planificar menú
-                                                        </Button>
-                                                    </CardContent>
-                                                </CollapsibleContent>
-                                            </Card>
-                                        </Collapsible>
+                                    <div className="fixed top-24 right-4 w-80 h-[calc(100vh-7rem)] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                                        <div className="space-y-4 pr-2">
+                                            {/* Quick Actions */}
+                                            <Collapsible open={isQuickActionsOpen} onOpenChange={setIsQuickActionsOpen}>
+                                                <Card className="transition-all duration-200">
+                                                    <CollapsibleTrigger asChild>
+                                                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                                                            <CardTitle className="text-lg flex items-center justify-between">
+                                                                Acciones Rápidas
+                                                                <div className="transition-transform duration-200">
+                                                                    {isQuickActionsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                                </div>
+                                                            </CardTitle>
+                                                        </CardHeader>
+                                                    </CollapsibleTrigger>
+                                                    <CollapsibleContent className="transition-all duration-200">
+                                                        <CardContent className="space-y-2">
+                                                            <Button
+                                                                variant="outline"
+                                                                className="w-full justify-start bg-transparent"
+                                                                onClick={() => setInputValue("¿Qué puedo cocinar con pollo y arroz?")}
+                                                            >
+                                                                <Sparkles className="w-4 h-4 mr-2" />
+                                                                Sugerir receta
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                className="w-full justify-start bg-transparent"
+                                                                onClick={() => setInputValue("¿Dónde está más barato el aceite de oliva?")}
+                                                            >
+                                                                <DollarSign className="w-4 h-4 mr-2" />
+                                                                Comparar precios
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                className="w-full justify-start bg-transparent"
+                                                                onClick={() => setInputValue("¿Cómo organizo mi despensa?")}
+                                                            >
+                                                                <ShoppingCart className="w-4 h-4 mr-2" />
+                                                                Tips de organización
+                                                            </Button>
+                                                            <Button
+                                                                variant="outline"
+                                                                className="w-full justify-start bg-transparent"
+                                                                onClick={() => setInputValue("Menú semanal para 4 personas con $300")}
+                                                            >
+                                                                <Clock className="w-4 h-4 mr-2" />
+                                                                Planificar menú
+                                                            </Button>
+                                                        </CardContent>
+                                                    </CollapsibleContent>
+                                                </Card>
+                                            </Collapsible>
 
-                                        {/* Recent Topics */}
-                                        <Collapsible open={isTopicsOpen} onOpenChange={setIsTopicsOpen}>
-                                            <Card className="transition-all duration-200">
-                                                <CollapsibleTrigger asChild>
-                                                    <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                                                        <CardTitle className="text-lg flex items-center justify-between">
-                                                            Temas Populares
-                                                            <div className="transition-transform duration-200">
-                                                                {isTopicsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                            {/* Recent Topics */}
+                                            <Collapsible open={isTopicsOpen} onOpenChange={setIsTopicsOpen}>
+                                                <Card className="transition-all duration-200">
+                                                    <CollapsibleTrigger asChild>
+                                                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                                                            <CardTitle className="text-lg flex items-center justify-between">
+                                                                Temas Populares
+                                                                <div className="transition-transform duration-200">
+                                                                    {isTopicsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                                </div>
+                                                            </CardTitle>
+                                                        </CardHeader>
+                                                    </CollapsibleTrigger>
+                                                    <CollapsibleContent className="transition-all duration-200">
+                                                        <CardContent>
+                                                            <div className="space-y-3">
+                                                                <div 
+                                                                    className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
+                                                                    onClick={() => setInputValue("Recetas con pollo económicas")}
+                                                                >
+                                                                    <p className="text-sm font-medium">Recetas con pollo económicas</p>
+                                                                    <p className="text-xs text-muted-foreground">Preguntado 15 veces hoy</p>
+                                                                </div>
+                                                                <div 
+                                                                    className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
+                                                                    onClick={() => setInputValue("Organizar despensa pequeña")}
+                                                                >
+                                                                    <p className="text-sm font-medium">Organizar despensa pequeña</p>
+                                                                    <p className="text-xs text-muted-foreground">Preguntado 12 veces hoy</p>
+                                                                </div>
+                                                                <div 
+                                                                    className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
+                                                                    onClick={() => setInputValue("Menús vegetarianos baratos")}
+                                                                >
+                                                                    <p className="text-sm font-medium">Menús vegetarianos baratos</p>
+                                                                    <p className="text-xs text-muted-foreground">Preguntado 8 veces hoy</p>
+                                                                </div>
                                                             </div>
-                                                        </CardTitle>
-                                                    </CardHeader>
-                                                </CollapsibleTrigger>
-                                                <CollapsibleContent className="transition-all duration-200">
-                                                    <CardContent>
-                                                        <div className="space-y-3">
-                                                            <div 
-                                                                className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
-                                                                onClick={() => setInputValue("Recetas con pollo económicas")}
-                                                            >
-                                                                <p className="text-sm font-medium">Recetas con pollo económicas</p>
-                                                                <p className="text-xs text-muted-foreground">Preguntado 15 veces hoy</p>
-                                                            </div>
-                                                            <div 
-                                                                className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
-                                                                onClick={() => setInputValue("Organizar despensa pequeña")}
-                                                            >
-                                                                <p className="text-sm font-medium">Organizar despensa pequeña</p>
-                                                                <p className="text-xs text-muted-foreground">Preguntado 12 veces hoy</p>
-                                                            </div>
-                                                            <div 
-                                                                className="p-3 bg-muted/50 rounded-lg cursor-pointer hover:bg-muted transition-colors"
-                                                                onClick={() => setInputValue("Menús vegetarianos baratos")}
-                                                            >
-                                                                <p className="text-sm font-medium">Menús vegetarianos baratos</p>
-                                                                <p className="text-xs text-muted-foreground">Preguntado 8 veces hoy</p>
-                                                            </div>
-                                                        </div>
-                                                    </CardContent>
-                                                </CollapsibleContent>
-                                            </Card>
-                                        </Collapsible>
+                                                        </CardContent>
+                                                    </CollapsibleContent>
+                                                </Card>
+                                            </Collapsible>
 
-                                        {/* Tips */}
-                                        <Collapsible open={isTipOpen} onOpenChange={setIsTipOpen}>
-                                            <Card className="transition-all duration-200">
-                                                <CollapsibleTrigger asChild>
-                                                    <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
-                                                        <CardTitle className="text-lg flex items-center justify-between">
-                                                            Tip del Día
-                                                            <div className="transition-transform duration-200">
-                                                                {isTipOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                            {/* Tips */}
+                                            <Collapsible open={isTipOpen} onOpenChange={setIsTipOpen}>
+                                                <Card className="transition-all duration-200">
+                                                    <CollapsibleTrigger asChild>
+                                                        <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                                                            <CardTitle className="text-lg flex items-center justify-between">
+                                                                Tip del Día
+                                                                <div className="transition-transform duration-200">
+                                                                    {isTipOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                                                                </div>
+                                                            </CardTitle>
+                                                        </CardHeader>
+                                                    </CollapsibleTrigger>
+                                                    <CollapsibleContent className="transition-all duration-200">
+                                                        <CardContent>
+                                                            <div className="p-3 bg-primary/10 rounded-lg">
+                                                                <p className="text-sm font-medium mb-2">
+                                                                    {tipOfDay?.title || "Ahorra comprando en temporada"}
+                                                                </p>
+                                                                <p className="text-xs text-muted-foreground">
+                                                                    {tipOfDay?.description || "Las frutas y verduras de temporada pueden costar hasta 40% menos. Pregúntame qué está en temporada este mes."}
+                                                                </p>
                                                             </div>
-                                                        </CardTitle>
-                                                    </CardHeader>
-                                                </CollapsibleTrigger>
-                                                <CollapsibleContent className="transition-all duration-200">
-                                                    <CardContent>
-                                                        <div className="p-3 bg-primary/10 rounded-lg">
-                                                            <p className="text-sm font-medium mb-2">
-                                                                {tipOfDay?.title || "Ahorra comprando en temporada"}
-                                                            </p>
-                                                            <p className="text-xs text-muted-foreground">
-                                                                {tipOfDay?.description || "Las frutas y verduras de temporada pueden costar hasta 40% menos. Pregúntame qué está en temporada este mes."}
-                                                            </p>
-                                                        </div>
-                                                    </CardContent>
-                                                </CollapsibleContent>
-                                            </Card>
-                                        </Collapsible>
+                                                        </CardContent>
+                                                    </CollapsibleContent>
+                                                </Card>
+                                            </Collapsible>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -667,7 +625,6 @@ function ChatWithStream({ chat, auth, flash }: { chat: ChatType | undefined; aut
                     </div>
                 </div>
             </div>
-            </SidebarProvider>
         </>
     );
 }
